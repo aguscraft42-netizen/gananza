@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+.env.test
+!.env.example
+*.log
+.DS_Store
+supabase/.temp/
+coverage/
+
+*.tsbuildinfo

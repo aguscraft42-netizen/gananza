@@ -1,0 +1,8 @@
+1. Ejecutá EDITAR_ENV_LOCAL.bat.
+2. Pegá NEXT_PUBLIC_SUPABASE_URL.
+3. Pegá NEXT_PUBLIC_SUPABASE_ANON_KEY.
+4. Pegá SUPABASE_SERVICE_ROLE_KEY solo en tu computadora.
+5. Cambiá NEXT_PUBLIC_APP_MODE=demo por NEXT_PUBLIC_APP_MODE=supabase.
+6. Guardá el archivo y cerrá el Bloc de notas.
+
+No compartas el archivo .env.local ni subas sus claves a GitHub.

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title">
+  <title id="title">Gananza</title>
+  <path d="M91 34A43 43 0 1 0 91 95M69 64h29v27" fill="none" stroke="#071019" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="#071019"><ellipse cx="100" cy="81" rx="12" ry="5.8"/><rect x="88" y="81" width="24" height="23" rx="10"/></g>
+  <path d="M88 88c5 4 19 4 24 0M88 97c5 4 19 4 24 0" fill="none" stroke="#FFFFFF" stroke-opacity=".3" stroke-width="2"/>
+</svg>

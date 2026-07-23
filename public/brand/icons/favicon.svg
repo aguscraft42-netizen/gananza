@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">Gananza</title>
+  <defs>
+    <linearGradient id="bg" x1="44" y1="36" x2="470" y2="486" gradientUnits="userSpaceOnUse"><stop stop-color="#102638"/><stop offset="1" stop-color="#071019"/></linearGradient>
+    <linearGradient id="green" x1="136" y1="116" x2="364" y2="398" gradientUnits="userSpaceOnUse"><stop stop-color="#23D995"/><stop offset="1" stop-color="#07865D"/></linearGradient>
+    <linearGradient id="gold" x1="328" y1="292" x2="402" y2="405" gradientUnits="userSpaceOnUse"><stop stop-color="#FFD25A"/><stop offset="1" stop-color="#E59A08"/></linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+  <path d="M335 161a157 157 0 1 0 0 239" fill="none" stroke="url(#green)" stroke-width="58" stroke-linecap="round"/>
+  <path d="M256 271h101v91" fill="none" stroke="url(#green)" stroke-width="58" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="url(#gold)" stroke="#C57B00" stroke-width="6">
+    <path d="M324 324c0-12 20-21 44-21s44 9 44 21v22c0 12-20 21-44 21s-44-9-44-21z"/>
+    <path d="M324 357c0-12 20-21 44-21s44 9 44 21v22c0 12-20 21-44 21s-44-9-44-21z"/>
+    <path d="M324 390c0-12 20-21 44-21s44 9 44 21v22c0 12-20 21-44 21s-44-9-44-21z"/>
+  </g>
+</svg>

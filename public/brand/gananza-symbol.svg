@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Gananza</title>
+  <desc id="desc">Letra G verde acompañada por tres monedas doradas.</desc>
+  <defs>
+    <linearGradient id="green" x1="22" y1="18" x2="98" y2="108" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#23D995"/>
+      <stop offset="1" stop-color="#07865D"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="88" y1="72" x2="112" y2="111" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFD25A"/>
+      <stop offset="1" stop-color="#E59A08"/>
+    </linearGradient>
+  </defs>
+  <path d="M91 34A43 43 0 1 0 91 95" fill="none" stroke="url(#green)" stroke-width="16" stroke-linecap="round"/>
+  <path d="M69 64h29v27" fill="none" stroke="url(#green)" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <g fill="url(#gold)" stroke="#C57B00" stroke-width="1.5">
+    <path d="M88 80c0-3.2 5.4-5.8 12-5.8s12 2.6 12 5.8v6c0 3.2-5.4 5.8-12 5.8S88 89.2 88 86z"/>
+    <path d="M88 89c0-3.2 5.4-5.8 12-5.8s12 2.6 12 5.8v6c0 3.2-5.4 5.8-12 5.8S88 98.2 88 95z"/>
+    <path d="M88 98c0-3.2 5.4-5.8 12-5.8s12 2.6 12 5.8v6c0 3.2-5.4 5.8-12 5.8S88 107.2 88 104z"/>
+  </g>
+</svg>
