@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 760" role="img" aria-labelledby="title desc">
+  <title id="title">Gananza en un teléfono</title>
+  <desc id="desc">Mockup final del producto con saldo disponible, tarea recomendada y retiro.</desc>
+  <defs>
+    <linearGradient id="phoneEdge" x1="92" y1="42" x2="426" y2="716" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#f6f8ef"/>
+      <stop offset=".08" stop-color="#4f5a5c"/>
+      <stop offset=".28" stop-color="#0b1014"/>
+      <stop offset=".76" stop-color="#030609"/>
+      <stop offset="1" stop-color="#9ca7a4"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="166" y1="88" x2="358" y2="682" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#071926"/>
+      <stop offset=".48" stop-color="#092236"/>
+      <stop offset="1" stop-color="#02080f"/>
+    </linearGradient>
+    <linearGradient id="emerald" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#35f4a5"/>
+      <stop offset="1" stop-color="#16c784"/>
+    </linearGradient>
+    <filter id="shadow" x="-40%" y="-30%" width="180%" height="170%">
+      <feDropShadow dx="0" dy="34" stdDeviation="28" flood-color="#000000" flood-opacity=".48"/>
+      <feDropShadow dx="0" dy="0" stdDeviation="18" flood-color="#16c784" flood-opacity=".18"/>
+    </filter>
+    <clipPath id="screenClip">
+      <path d="M151 83 409 110c24 3 40 24 37 48l-49 504c-3 28-29 48-57 43l-211-38c-22-4-37-24-34-46l49-493c3-28 27-48 55-45Z"/>
+    </clipPath>
+  </defs>
+  <g filter="url(#shadow)" transform="rotate(4 260 380)">
+    <path d="M131 55 411 84c37 4 64 37 60 74l-50 515c-4 42-43 72-84 65l-225-39c-36-6-60-39-57-75l50-506c4-39 35-67 74-63Z" fill="#070b10"/>
+    <path d="M131 55 411 84c37 4 64 37 60 74l-50 515c-4 42-43 72-84 65l-225-39c-36-6-60-39-57-75l50-506c4-39 35-67 74-63Z" fill="none" stroke="url(#phoneEdge)" stroke-width="8"/>
+    <path d="M151 83 409 110c24 3 40 24 37 48l-49 504c-3 28-29 48-57 43l-211-38c-22-4-37-24-34-46l49-493c3-28 27-48 55-45Z" fill="url(#screen)"/>
+    <g clip-path="url(#screenClip)">
+      <rect x="84" y="72" width="386" height="640" fill="url(#screen)"/>
+      <circle cx="352" cy="192" r="150" fill="#16c784" opacity=".12"/>
+      <path d="M160 352c70-46 127 42 222-20" fill="none" stroke="#2dd4bf" stroke-width="3" opacity=".23"/>
+      <path d="M132 606c83-30 138 32 244-18" fill="none" stroke="#16c784" stroke-width="3" opacity=".18"/>
+      <g font-family="Inter, Arial, sans-serif" fill="#f8fbff">
+        <g transform="translate(172 132)">
+          <rect width="26" height="26" rx="8" fill="url(#emerald)"/>
+          <text x="8" y="19" font-size="18" font-weight="900" fill="#062116">G</text>
+          <text x="36" y="19" font-size="18" font-weight="850">Gananza</text>
+        </g>
+        <text x="168" y="198" font-size="18" font-weight="800">Hola, Agus</text>
+        <text x="166" y="256" font-size="48" font-weight="900" letter-spacing="-1.5">$ 8.650</text>
+        <rect x="160" y="278" width="182" height="46" rx="14" fill="url(#emerald)"/>
+        <text x="208" y="307" font-size="14" font-weight="900" fill="#02140c">Retirar saldo</text>
+        <rect x="151" y="356" width="235" height="118" rx="20" fill="#0d2636" stroke="#2dd4bf" stroke-opacity=".22"/>
+        <text x="170" y="390" font-size="12" font-weight="800" fill="#91a7b8">Tarea destacada</text>
+        <text x="170" y="422" font-size="18" font-weight="900">Encuesta recomendada</text>
+        <text x="170" y="449" font-size="13" fill="#a8b8c7">Opinión verificada</text>
+        <text x="328" y="452" font-size="18" font-weight="900" fill="#39daa0">+$650</text>
+        <g font-size="13" fill="#a8b8c7" font-weight="750">
+          <rect x="140" y="499" width="238" height="40" rx="13" fill="#0a1d2a" stroke="#8fd8d0" stroke-opacity=".11"/>
+          <text x="158" y="524">Juego rápido</text><text x="322" y="524" fill="#39daa0" font-weight="900">+$420</text>
+          <rect x="136" y="548" width="238" height="40" rx="13" fill="#0a1d2a" stroke="#8fd8d0" stroke-opacity=".11"/>
+          <text x="154" y="573">App aprobada</text><text x="321" y="573" fill="#39daa0" font-weight="900">+$300</text>
+          <rect x="131" y="597" width="238" height="40" rx="13" fill="#0a1d2a" stroke="#8fd8d0" stroke-opacity=".11"/>
+          <text x="149" y="622">Pago transferido</text><text x="312" y="622" fill="#c8f6df" font-weight="900">$1.200</text>
+        </g>
+      </g>
+    </g>
+    <rect x="240" y="87" width="94" height="20" rx="10" fill="#020407"/>
+    <circle cx="352" cy="100" r="6" fill="#111827"/>
+    <path d="M435 273c10 3 16 12 15 23l-14 138" fill="none" stroke="#141b20" stroke-width="9" stroke-linecap="round"/>
+  </g>
+</svg>
