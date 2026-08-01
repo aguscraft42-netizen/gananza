@@ -1,25 +1,175 @@
+import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import { PublicHeader } from "@/components/PublicHeader";
+import { GananzaLogo } from "@/components/brand/gananza-logo";
+import { LandingCountUp } from "@/components/LandingCountUp";
+
+const benefits = [
+  {
+    icon: "/landing/earnings.svg",
+    title: "Ingresos extra",
+    copy: "Completá tareas y sumá recompensas según tu actividad.",
+  },
+  {
+    icon: "/landing/transparent-rewards.svg",
+    title: "Todo claro desde el inicio",
+    copy: "Sabés qué hacer, cuánto suma y cuándo puede validarse.",
+  },
+  {
+    icon: "/landing/secure-withdrawal.svg",
+    title: "Retiro seguro",
+    copy: "Solicitá tu saldo disponible mediante métodos verificados.",
+  },
+];
+
+const steps = [
+  ["Elegí una tarea", "Revisá las condiciones y la recompensa.", "/landing/tasks.svg"],
+  ["Completá el objetivo", "Seguí las instrucciones sin perder la atribución.", "/landing/progress.svg"],
+  ["Esperá la validación", "El proveedor confirma que se cumplió correctamente.", "/landing/verified-status.svg"],
+  ["Retirá tu saldo", "Cuando quede disponible, elegí tu método de retiro.", "/landing/secure-withdrawal.svg"],
+];
+
+const states = [
+  ["Disponible", "Podés iniciarla ahora.", "available"],
+  ["En progreso", "Seguimiento activo.", "progress"],
+  ["Pendiente", "El proveedor valida.", "pending"],
+  ["Confirmada", "Ya suma al saldo.", "confirmed"],
+  ["Rechazada", "Motivo informado.", "rejected"],
+  ["Finalizada", "Cupos cerrados.", "finished"],
+];
 
 export default function HomePage() {
+  const year = new Date().getFullYear();
+
   return (
     <>
       <PublicHeader />
-      <main>
-        <section className="public-hero public-shell v4-hero">
-          <div className="public-copy"><span className="eyebrow">TAREAS CLARAS. RECOMPENSAS TRANSPARENTES.</span><h1>Tu tiempo también <span>puede sumar.</span></h1><p>Completá encuestas, probá juegos y descubrí servicios. Antes de empezar vas a saber qué hacer, cuánto suma y cuándo se valida.</p><div className="public-actions"><Link href="/acceso" className="primary-button">Probar Gananza V5</Link><Link href="#como-funciona" className="secondary-button">Cómo funciona</Link></div><div className="hero-proof"><span>✓ Sin promesas engañosas</span><span>✓ Estados visibles</span><span>✓ Retiros simulados</span></div><p className="public-fine">Gananza no promete ingresos garantizados. Cada recompensa depende de completar y validar la tarea.</p></div>
-          <div className="phone-stage" aria-label="Vista previa de Gananza"><div className="phone-glow"/><div className="phone-mock"><div className="phone-screen"><div className="phone-notch"/><div className="phone-mini-top"><span>9:41</span><b>GANANZA</b><i>●</i></div><div className="phone-greeting">Buenas noches<strong>Agustín</strong></div><div className="phone-balance"><small>DISPONIBLE PARA RETIRAR</small><strong>$8.650</strong><button>Retirar saldo</button></div><div className="phone-state-row"><span><i className="available"/>3 disponibles</span><span><i className="pending"/>1 pendiente</span></div><div className="phone-title">Tareas recomendadas</div><div className="phone-task"><i>KH</i><div><strong>Kingdom Harbor</strong><span>Llegá al nivel 12</span></div><b>+$4.200</b></div><div className="phone-task"><i style={{background:"linear-gradient(145deg,#2587e8,#123c8a)"}}>PO</i><div><strong>Hábitos digitales</strong><span>Encuesta de 8 minutos</span></div><b>+$950</b></div><div className="phone-task"><i style={{background:"linear-gradient(145deg,#f4b61f,#9b5e0c)",color:"#211500"}}>AP</i><div><strong>Probá AulaPro</strong><span>Registro gratuito</span></div><b>+$1.800</b></div><div className="phone-bottom"><span>⌂<small>Inicio</small></span><span>☑<small>Tareas</small></span><span>$<small>Billetera</small></span><span>○<small>Perfil</small></span></div></div></div></div>
+      <main className="launch-page">
+        <section className="launch-hero public-shell">
+          <div className="hero-copy launch-reveal">
+            <p className="hero-benefit">GENERÁ INGRESOS EXTRA</p>
+            <h1>Tu tiempo también puede sumar.</h1>
+            <p className="hero-subtitle">Completá tareas, encuestas y desafíos. Conocé la recompensa antes de empezar y retirá tu saldo cuando quede disponible.</p>
+            <div className="launch-actions">
+              <Link href="/acceso" className="primary-button hero-primary">Empezar a ganar</Link>
+              <Link href="#como-funciona" className="secondary-button">Ver cómo funciona</Link>
+            </div>
+            <div className="hero-claims" aria-label="Beneficios principales">
+              <span>Tareas claras</span>
+              <span>Recompensas visibles</span>
+              <span>Retiros verificados</span>
+            </div>
+            <p className="hero-disclaimer">Las recompensas dependen de completar y validar cada tarea. Gananza no garantiza ingresos fijos.</p>
+          </div>
+
+          <div className="hero-product" aria-label="Vista previa del producto Gananza">
+            <div className="hero-orbit" aria-hidden="true" />
+            <Image className="hero-coins coins-a" src="/landing/hero-coins.svg" width={220} height={160} alt="" aria-hidden="true" priority />
+            <Image className="hero-ring" src="/landing/hero-progress-ring.svg" width={160} height={160} alt="" aria-hidden="true" priority />
+            <article className="hero-phone" aria-label="Mockup de saldo y tareas">
+              <div className="phone-speaker" />
+              <div className="phone-top">
+                <span>Hola, Agus</span>
+                <i />
+              </div>
+              <div className="phone-balance-panel">
+                <small>Saldo disponible</small>
+                <strong><LandingCountUp value={8650} /></strong>
+                <button type="button">Retirar saldo</button>
+              </div>
+              <div className="phone-task-panel">
+                <span>Tarea destacada</span>
+                <h3>Encuesta de opinión</h3>
+                <p>75 min · validación por proveedor</p>
+                <div><b>+$650</b><em>Disponible</em></div>
+              </div>
+              <div className="phone-progress">
+                <span><b>68%</b> progreso</span>
+                <i><u /></i>
+              </div>
+            </article>
+            <Image className="floating-card balance-float" src="/landing/hero-balance-card.svg" width={260} height={152} alt="Tarjeta visual de saldo disponible" />
+            <Image className="floating-card task-float" src="/landing/hero-task-card.svg" width={270} height={143} alt="Tarjeta visual de tarea recomendada" />
+          </div>
         </section>
 
-        <section className="trust-band"><div className="public-shell trust-band-grid"><div className="trust-item"><strong>Condiciones visibles</strong><span>Objetivo, plazo y recompensa antes de empezar.</span></div><div className="trust-item"><strong>Seis estados claros</strong><span>Desde disponible hasta confirmada o rechazada.</span></div><div className="trust-item"><strong>Retiros revisados</strong><span>Seguridad antes de liberar cada pago.</span></div></div></section>
+        <section id="beneficios" className="launch-section public-shell launch-reveal">
+          <div className="launch-section-head">
+            <span>Beneficios</span>
+            <h2>Una forma simple y controlada de sumar valor con tu actividad.</h2>
+          </div>
+          <div className="benefit-grid">
+            {benefits.map((benefit) => (
+              <article className="benefit-tile" key={benefit.title}>
+                <Image src={benefit.icon} width={58} height={58} alt="" aria-hidden="true" />
+                <h3>{benefit.title}</h3>
+                <p>{benefit.copy}</p>
+              </article>
+            ))}
+          </div>
+        </section>
 
-        <section id="como-funciona" className="public-section public-shell"><div className="public-section-head"><span className="eyebrow">ASÍ FUNCIONA</span><h2>Elegí una tarea y seguí tu Gananza paso a paso.</h2><p>La interfaz está pensada para explicar qué ocurre con tu recompensa en cada momento.</p></div><div className="step-grid"><article className="step-card"><span>01</span><h3>Elegí</h3><p>Revisá el objetivo, el tiempo estimado, la vigencia y las condiciones.</p></article><article className="step-card"><span>02</span><h3>Completá</h3><p>Empezá desde Gananza y seguí el progreso sin perder la atribución.</p></article><article className="step-card"><span>03</span><h3>Validá</h3><p>La recompensa queda pendiente hasta que el proveedor confirma la acción.</p></article><article className="step-card"><span>04</span><h3>Retirá</h3><p>Cuando queda disponible, elegís el método y revisás la solicitud.</p></article></div></section>
+        <section id="como-funciona" className="launch-section process-section public-shell launch-reveal">
+          <div className="launch-section-head">
+            <span>Cómo funciona</span>
+            <h2>Cuatro pasos conectados, sin saldos ambiguos.</h2>
+          </div>
+          <div className="process-track">
+            {steps.map(([title, copy, icon], index) => (
+              <article className="process-step" key={title} style={{ "--step": index } as CSSProperties}>
+                <span className="step-number">0{index + 1}</span>
+                <Image src={icon} width={42} height={42} alt="" aria-hidden="true" />
+                <h3>{title}</h3>
+                <p>{copy}</p>
+              </article>
+            ))}
+          </div>
+        </section>
 
-        <section id="estados" className="public-section public-shell state-showcase"><div className="public-section-head"><span className="eyebrow">SIN SALDOS AMBIGUOS</span><h2>Cada tarea muestra su estado real.</h2></div><div className="state-cards"><article><i className="available"/><strong>Disponible</strong><span>Podés iniciarla ahora.</span></article><article><i className="progress"/><strong>En progreso</strong><span>Gananza guarda el seguimiento.</span></article><article><i className="pending"/><strong>Pendiente</strong><span>El proveedor está validando.</span></article><article><i className="done"/><strong>Confirmada</strong><span>Ya forma parte del saldo.</span></article><article><i className="rejected"/><strong>Rechazada</strong><span>Se informa el motivo y soporte.</span></article><article><i className="expired"/><strong>Finalizada</strong><span>La campaña terminó o agotó cupos.</span></article></div></section>
+        <section id="seguridad" className="launch-section states-section public-shell launch-reveal">
+          <div className="launch-section-head">
+            <span>Estados de recompensa</span>
+            <h2>Cada tarea muestra dónde está tu recompensa.</h2>
+          </div>
+          <div className="state-editorial">
+            <div className="state-spotlight">
+              <Image src="/landing/verified-status.svg" width={72} height={72} alt="" aria-hidden="true" />
+              <strong>Seguimiento visible</strong>
+              <p>Gananza separa lo disponible, lo pendiente y lo confirmado para que sepas qué podés retirar.</p>
+            </div>
+            <div className="state-flow">
+              {states.map(([title, copy, tone], index) => (
+                <article className={`reward-state ${tone}`} key={title} style={{ "--state": index } as CSSProperties}>
+                  <i aria-hidden="true" />
+                  <strong>{title}</strong>
+                  <span>{copy}</span>
+                </article>
+              ))}
+            </div>
+          </div>
+        </section>
 
-        <section className="public-cta public-shell"><div><span className="eyebrow">GANANZA V5 · SUPABASE READY</span><h2>Recorré el producto completo.</h2><p>Modo demo o datos reales con Auth, RLS, ledger, retiros y callbacks.</p></div><Link href="/acceso" className="primary-button">Abrir experiencia</Link></section>
+        <section className="launch-final-cta public-shell launch-reveal">
+          <div>
+            <span>GANANZA</span>
+            <h2>Empezá a generar ingresos extra con Gananza.</h2>
+            <p>Encontrá tareas, conocé la recompensa y seguí cada paso hasta que tu saldo esté disponible.</p>
+            <Link href="/acceso" className="primary-button">Crear mi cuenta</Link>
+          </div>
+          <p className="final-note">Registrarte no tiene costo. Las tareas disponibles varían según perfil y ubicación.</p>
+        </section>
       </main>
-      <footer className="public-footer public-shell"><span>Gananza · Proyecto en validación</span><span>Argentina · 2026</span></footer>
+
+      <footer className="launch-footer public-shell">
+        <GananzaLogo variant="logo" size={34} />
+        <nav aria-label="Enlaces legales">
+          <Link href="/acceso">Términos</Link>
+          <Link href="/acceso">Privacidad</Link>
+          <Link href="/soporte">Soporte</Link>
+        </nav>
+        <span>Argentina · {year}</span>
+      </footer>
     </>
   );
 }
