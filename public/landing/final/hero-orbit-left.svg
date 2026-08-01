@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" fill="none"><defs>
+  <linearGradient id="emerald" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6affb8"/><stop offset=".48" stop-color="#19e68d"/><stop offset="1" stop-color="#05a977"/></linearGradient>
+  <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#49f3dd"/><stop offset="1" stop-color="#13d28c"/></linearGradient>
+  <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffe176"/><stop offset="1" stop-color="#f2a51a"/></linearGradient>
+  <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#58d8ff"/><stop offset="1" stop-color="#287bff"/></linearGradient>
+  <linearGradient id="red" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7d83"/><stop offset="1" stop-color="#ff4657"/></linearGradient>
+  <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d4b6ff"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient>
+  <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="3.2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  <filter id="deepShadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000915" flood-opacity=".65"/></filter>
+</defs><g filter="url(#softGlow)" opacity=".95"><path d="M89 315C155 102 437 36 610 172" stroke="url(#emerald)" stroke-width="1.5" stroke-dasharray="6 12"/><path d="M120 397C231 230 411 182 642 256" stroke="#44ffc0" stroke-width="1" opacity=".65"/><path d="M140 300C254 166 451 146 592 235" stroke="#e2f86c" stroke-width="1" opacity=".38"/><circle cx="158" cy="259" r="4" fill="#ecff86"/><circle cx="512" cy="175" r="5" fill="#5effbd"/><circle cx="626" cy="256" r="3" fill="#edff87"/><circle cx="95" cy="312" r="2.5" fill="#71ffd0"/></g></svg>

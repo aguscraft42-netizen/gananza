@@ -4,38 +4,20 @@ import type { CSSProperties } from "react";
 import { PublicHeader } from "@/components/PublicHeader";
 import { GananzaLogo } from "@/components/brand/gananza-logo";
 
-const benefits = [
-  {
-    icon: "/landing/benefit-earnings.svg",
-    title: "Ingresos extra",
-    copy: "Completá tareas y sumá recompensas según tu actividad.",
-  },
-  {
-    icon: "/landing/benefit-clarity.svg",
-    title: "Todo claro desde el inicio",
-    copy: "Sabés qué hacer, cuánto suma y cuándo puede validarse.",
-  },
-  {
-    icon: "/landing/benefit-secure.svg",
-    title: "Retiro seguro",
-    copy: "Solicitá tu saldo disponible mediante métodos verificados.",
-  },
-];
-
 const steps = [
-  ["Elegí una tarea", "Revisá el objetivo, el tiempo estimado, la vigencia y las condiciones.", "/landing/step-choose.svg"],
-  ["Completá el objetivo", "Empezá desde Gananza y seguí el progreso sin perder la atribución.", "/landing/step-complete.svg"],
-  ["Esperá la validación", "El proveedor confirma que se cumplió correctamente.", "/landing/step-validate.svg"],
-  ["Retirá tu saldo", "Cuando quede disponible, elegí tu método de retiro.", "/landing/step-withdraw.svg"],
+  ["Eleg\u00ed", "Revis\u00e1 el objetivo, el tiempo estimado, la vigencia y las condiciones.", "/landing/final/step-choose.svg"],
+  ["Complet\u00e1", "Empez\u00e1 desde Gananza y segu\u00ed el progreso sin perder la atribuci\u00f3n.", "/landing/final/step-complete.svg"],
+  ["Valid\u00e1", "La recompensa queda pendiente hasta que el proveedor confirma la acci\u00f3n.", "/landing/final/step-validate.svg"],
+  ["Retir\u00e1", "Cuando queda disponible, eleg\u00eds el m\u00e9todo y revis\u00e1s la solicitud.", "/landing/final/step-withdraw.svg"],
 ];
 
 const states = [
-  ["Disponible", "Podés iniciarla ahora.", "available", "/landing/state-available.svg"],
-  ["En progreso", "Seguimiento activo.", "progress", "/landing/state-progress.svg"],
-  ["Pendiente", "El proveedor valida.", "pending", "/landing/state-pending.svg"],
-  ["Confirmada", "Ya suma al saldo.", "confirmed", "/landing/state-confirmed.svg"],
-  ["Rechazada", "Motivo informado.", "rejected", "/landing/state-rejected.svg"],
-  ["Finalizada", "Cupos cerrados.", "finished", "/landing/state-finished.svg"],
+  ["Disponible", "Pod\u00e9s iniciarla ahora.", "available", "/landing/final/state-available.svg"],
+  ["En progreso", "Gananza guarda el seguimiento.", "progress", "/landing/final/state-progress.svg"],
+  ["Pendiente", "El proveedor est\u00e1 validando.", "pending", "/landing/final/state-pending.svg"],
+  ["Confirmada", "Ya forma parte del saldo.", "confirmed", "/landing/final/state-confirmed.svg"],
+  ["Rechazada", "Se informa el motivo y soporte.", "rejected", "/landing/final/state-rejected.svg"],
+  ["Finalizada", "La oportunidad termin\u00f3 o agot\u00f3 cupos.", "finished", "/landing/final/state-finished.svg"],
 ];
 
 export default function HomePage() {
@@ -44,58 +26,50 @@ export default function HomePage() {
   return (
     <>
       <PublicHeader />
-      <main className="launch-page asset-led-landing">
+      <main className="launch-page asset-led-landing final-reference-landing">
         <section className="launch-hero public-shell">
           <div className="hero-copy launch-reveal">
             <p className="hero-kicker">TAREAS CLARAS. RECOMPENSAS TRANSPARENTES.</p>
-            <p className="hero-benefit">GENERÁ INGRESOS EXTRA</p>
-            <h1>Tu tiempo también puede sumar.</h1>
-            <p className="hero-subtitle">Completá encuestas, probá juegos y descubrí servicios. Antes de empezar vas a saber qué hacer, cuánto suma y cuándo se valida.</p>
-            <div className="launch-actions">
-              <Link href="/acceso" className="primary-button hero-primary">Probar Gananza</Link>
-              <Link href="#como-funciona" className="secondary-button">Cómo funciona</Link>
-            </div>
+            <p className="hero-benefit">GENER&Aacute; INGRESOS EXTRA</p>
+            <h1>
+              Tu tiempo
+              <br />
+              <span className="headline-mid">tambi&eacute;n puede</span>
+              <br />
+              <span>sumar.</span>
+            </h1>
+            <p className="hero-subtitle">
+              Complet&aacute; encuestas, prob&aacute; juegos y descubr&iacute; servicios. Antes de empezar vas a saber qu&eacute; hacer,
+              cu&aacute;nto suma y cu&aacute;ndo se valida.
+            </p>
             <div className="hero-claims" aria-label="Beneficios principales">
               <span>Tareas transparentes</span>
               <span>Estados visibles</span>
               <span>Retiros revisados</span>
             </div>
-            <p className="hero-disclaimer">Gananza no promete ingresos garantizados. Cada recompensa depende de completar y validar la tarea.</p>
+            <div className="launch-actions">
+              <Link href="/acceso" className="primary-button hero-primary">Probar Gananza</Link>
+              <Link href="#como-funciona" className="secondary-button">C&oacute;mo funciona</Link>
+            </div>
+            <p className="hero-disclaimer">
+              Gananza no promete ingresos garantizados. Cada recompensa depende de completar y validar la tarea.
+            </p>
           </div>
 
           <div className="hero-product asset-hero-product" aria-label="Vista previa visual de Gananza">
-            <Image className="hero-layer hero-soft-glow" src="/landing/hero-soft-glow.png" width={900} height={900} alt="" aria-hidden="true" priority />
-            <Image className="hero-layer hero-orbit-lines" src="/landing/hero-orbit-lines.png" width={960} height={720} alt="" aria-hidden="true" priority />
-            <Image className="hero-layer hero-coins-cluster" src="/landing/hero-coins-cluster.png" width={760} height={560} alt="" aria-hidden="true" priority />
-            <div className="asset-phone-frame">
-              <Image className="asset-phone" src="/landing/hero-phone-complete.png" width={780} height={1140} alt="Aplicación Gananza mostrando saldo, tarea recomendada y retiros" priority />
-            </div>
-          </div>
-        </section>
-
-        <section id="beneficios" className="launch-section public-shell launch-reveal">
-          <div className="launch-section-head">
-            <span>Beneficios</span>
-            <h2>Una experiencia clara para convertir actividad en recompensas.</h2>
-          </div>
-          <div className="benefit-grid asset-benefit-grid">
-            {benefits.map((benefit) => (
-              <article className="benefit-tile asset-benefit-tile" key={benefit.title}>
-                <div className="benefit-art" aria-hidden="true">
-                  <Image src={benefit.icon} width={96} height={96} alt="" />
-                </div>
-                <h3>{benefit.title}</h3>
-                <p>{benefit.copy}</p>
-              </article>
-            ))}
+            <Image className="hero-layer hero-soft-glow" src="/landing/final/hero-glow.svg" width={760} height={620} alt="" aria-hidden="true" priority />
+            <Image className="hero-layer hero-orbit-left" src="/landing/final/hero-orbit-left.svg" width={720} height={520} alt="" aria-hidden="true" priority />
+            <Image className="hero-layer hero-orbit-right" src="/landing/final/hero-orbit-right.svg" width={720} height={520} alt="" aria-hidden="true" priority />
+            <Image className="hero-layer hero-coin coin-left" src="/landing/final/hero-coin-large.svg" width={86} height={86} alt="" aria-hidden="true" priority />
+            <Image className="hero-layer hero-coin coin-top" src="/landing/final/hero-coin-medium.svg" width={72} height={72} alt="" aria-hidden="true" priority />
+            <Image className="hero-layer hero-coin coin-right" src="/landing/final/hero-coin-medium.svg" width={70} height={70} alt="" aria-hidden="true" priority />
+            <Image className="hero-layer hero-coin-stack" src="/landing/final/hero-coin-stack.svg" width={132} height={92} alt="" aria-hidden="true" priority />
+            <Image className="asset-phone" src="/landing/final/hero-phone.svg" width={470} height={640} alt="Aplicaci\u00f3n Gananza mostrando saldo, tarea recomendada y retiros" priority />
           </div>
         </section>
 
         <section id="como-funciona" className="launch-section process-section public-shell launch-reveal">
-          <div className="launch-section-head">
-            <span>Cómo funciona</span>
-            <h2>Cuatro pasos conectados, con señales visuales en cada avance.</h2>
-          </div>
+          <h2 className="reference-section-title">&iquest;C&oacute;mo funciona?</h2>
           <div className="process-track asset-process-track">
             {steps.map(([title, copy, icon], index) => (
               <article className="process-step asset-process-step" key={title} style={{ "--step": index } as CSSProperties}>
@@ -111,52 +85,47 @@ export default function HomePage() {
         </section>
 
         <section id="seguridad" className="launch-section states-section public-shell launch-reveal">
-          <div className="launch-section-head">
-            <span>Estados</span>
-            <h2>Cada recompensa muestra su estado real.</h2>
-          </div>
-          <div className="state-editorial asset-state-editorial">
-            <div className="state-spotlight asset-state-spotlight">
-              <Image src="/landing/states-summary.svg" width={220} height={220} alt="" aria-hidden="true" />
-              <strong>Seguimiento visible</strong>
-              <p>Gananza separa lo disponible, lo pendiente y lo confirmado para que sepas qué podés retirar.</p>
-            </div>
-            <div className="state-flow asset-state-flow">
-              {states.map(([title, copy, tone, icon], index) => (
-                <article className={`reward-state asset-reward-state ${tone}`} key={title} style={{ "--state": index } as CSSProperties}>
-                  <div className="state-icon-crop" aria-hidden="true">
-                    <Image src={icon} width={56} height={56} alt="" />
-                  </div>
-                  <strong>{title}</strong>
-                  <span>{copy}</span>
-                </article>
-              ))}
-            </div>
+          <h2 className="reference-section-title states-title">Cada tarea muestra su estado real.</h2>
+          <div className="state-flow asset-state-flow">
+            {states.map(([title, copy, tone, icon], index) => (
+              <article className={`reward-state asset-reward-state ${tone}`} key={title} style={{ "--state": index } as CSSProperties}>
+                <div className="state-icon-crop" aria-hidden="true">
+                  <Image src={icon} width={56} height={56} alt="" />
+                </div>
+                <strong>{title}</strong>
+                <span>{copy}</span>
+              </article>
+            ))}
           </div>
         </section>
 
         <section className="launch-final-cta public-shell launch-reveal asset-final-cta">
-          <div className="final-cta-copy">
-            <span>GANANZA</span>
-            <h2>Empezá a generar ingresos extra con Gananza.</h2>
-            <p>Encontrá tareas, conocé la recompensa y seguí cada paso hasta que tu saldo esté disponible.</p>
-            <Link href="/acceso" className="primary-button">Crear mi cuenta</Link>
-            <p className="final-note">Registrarte no tiene costo. Las tareas disponibles pueden variar según perfil y ubicación.</p>
-          </div>
           <div className="final-cta-art" aria-hidden="true">
-            <Image className="final-visual" src="/landing/cta-final-visual.svg" width={560} height={360} alt="" />
+            <Image className="cta-wallet" src="/landing/final/cta-wallet.svg" width={260} height={160} alt="" />
+            <Image className="cta-coins" src="/landing/final/cta-coins.svg" width={250} height={145} alt="" />
           </div>
+          <div className="final-cta-copy">
+            <h2>Empez&aacute; a generar ingresos extra con Gananza.</h2>
+            <p>Explor&aacute; tareas, conoc&eacute; la recompensa antes de empezar y segu&iacute; cada estado hasta que tu saldo est&eacute; disponible.</p>
+            <Link href="/acceso" className="primary-button">Crear mi cuenta</Link>
+          </div>
+          <div className="final-cta-note">
+            <Image src="/landing/final/utility-security.svg" width={42} height={42} alt="" aria-hidden="true" />
+            <p>Sin costos de registro. Las tareas disponibles pueden variar seg&uacute;n el perfil y la ubicaci&oacute;n.</p>
+          </div>
+          <Image className="cta-growth" src="/landing/final/cta-growth-line.svg" width={380} height={150} alt="" aria-hidden="true" />
         </section>
       </main>
 
       <footer className="launch-footer public-shell">
         <GananzaLogo variant="logo" size={34} />
+        <span>&copy; {year} Gananza. Todos los derechos reservados.</span>
         <nav aria-label="Enlaces legales">
-          <Link href="/acceso">Términos</Link>
-          <Link href="/acceso">Privacidad</Link>
+          <Link href="/acceso">T&eacute;rminos y condiciones</Link>
+          <Link href="/acceso">Pol&iacute;tica de privacidad</Link>
           <Link href="/soporte">Soporte</Link>
         </nav>
-        <span>Argentina · {year}</span>
+        <span className="footer-country">Argentina</span>
       </footer>
     </>
   );
