@@ -47,31 +47,28 @@ export default function HomePage() {
       <main className="launch-page asset-led-landing">
         <section className="launch-hero public-shell">
           <div className="hero-copy launch-reveal">
+            <p className="hero-kicker">TAREAS CLARAS. RECOMPENSAS TRANSPARENTES.</p>
             <p className="hero-benefit">GENERÁ INGRESOS EXTRA</p>
             <h1>Tu tiempo también puede sumar.</h1>
-            <p className="hero-subtitle">Completá tareas, encuestas y desafíos. Conocé la recompensa antes de empezar y retirá tu saldo cuando quede disponible.</p>
+            <p className="hero-subtitle">Completá encuestas, probá juegos y descubrí servicios. Antes de empezar vas a saber qué hacer, cuánto suma y cuándo se valida.</p>
             <div className="launch-actions">
-              <Link href="/acceso" className="primary-button hero-primary">Empezar a ganar</Link>
-              <Link href="#como-funciona" className="secondary-button">Ver cómo funciona</Link>
+              <Link href="/acceso" className="primary-button hero-primary">Probar Gananza</Link>
+              <Link href="#como-funciona" className="secondary-button">Cómo funciona</Link>
             </div>
             <div className="hero-claims" aria-label="Beneficios principales">
-              <span>Tareas claras</span>
-              <span>Recompensas visibles</span>
-              <span>Retiros verificados</span>
+              <span>Tareas transparentes</span>
+              <span>Estados visibles</span>
+              <span>Retiros revisados</span>
             </div>
-            <p className="hero-disclaimer">Las recompensas dependen de completar y validar cada tarea. Gananza no garantiza ingresos fijos.</p>
+            <p className="hero-disclaimer">Gananza no promete ingresos garantizados. Cada recompensa depende de completar y validar la tarea.</p>
           </div>
 
           <div className="hero-product asset-hero-product" aria-label="Vista previa visual de Gananza">
-            <div className="hero-orbit" aria-hidden="true" />
+            <Image className="hero-layer hero-soft-glow" src="/landing/hero-soft-glow.png" width={900} height={900} alt="" aria-hidden="true" priority />
+            <Image className="hero-layer hero-orbit-lines" src="/landing/hero-orbit-lines.png" width={960} height={720} alt="" aria-hidden="true" priority />
+            <Image className="hero-layer hero-coins-cluster" src="/landing/hero-coins-cluster.png" width={760} height={560} alt="" aria-hidden="true" priority />
             <div className="asset-phone-frame">
-              <Image className="asset-phone" src="/landing/hero-phone-final.svg" width={520} height={760} alt="Aplicación Gananza mostrando saldo, tarea recomendada y retiros" priority />
-            </div>
-            <Image className="asset-coins asset-coins-a" src="/landing/hero-coins.svg" width={220} height={180} alt="" aria-hidden="true" priority />
-            <Image className="asset-coins asset-coins-b" src="/landing/hero-coins.svg" width={220} height={180} alt="" aria-hidden="true" />
-            <div className="asset-verified-pill">
-              <span />
-              <strong>Tarea verificada</strong>
+              <Image className="asset-phone" src="/landing/hero-phone-complete.png" width={780} height={1140} alt="Aplicación Gananza mostrando saldo, tarea recomendada y retiros" priority />
             </div>
           </div>
         </section>

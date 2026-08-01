@@ -2160,6 +2160,23 @@ body::before { opacity: .018; }
   animation: launchRise .6s ease both;
 }
 
+.hero-kicker {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  margin: 0 0 14px;
+  padding: 0 12px;
+  border: 1px solid rgba(57,218,160,.22);
+  border-radius: 10px;
+  color: var(--green-2);
+  background: rgba(22,199,132,.055);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  animation: launchRise .55s ease both;
+}
+
 .hero-copy h1 {
   max-width: 680px;
   margin: 0;
@@ -4011,6 +4028,243 @@ body::before { opacity: .018; }
 
   .launch-nav .primary-button {
     min-width: 108px;
+  }
+}
+
+/* Hero phase 1: approved launch composition */
+.asset-led-landing .launch-hero {
+  grid-template-columns: minmax(0, 1fr) minmax(520px, .98fr);
+  max-width: 1280px;
+  min-height: calc(100vh - 78px);
+  gap: clamp(28px, 5vw, 70px);
+  align-items: center;
+  padding: clamp(34px, 5vw, 58px) 0 clamp(42px, 5vw, 64px);
+}
+
+.asset-led-landing .hero-copy {
+  max-width: 640px;
+}
+
+.asset-led-landing .hero-benefit {
+  margin-bottom: 12px;
+  font-size: clamp(30px, 4.2vw, 54px);
+  letter-spacing: .01em;
+}
+
+.asset-led-landing .hero-copy h1 {
+  max-width: 650px;
+  font-size: clamp(58px, 6.15vw, 88px);
+  line-height: .96;
+  letter-spacing: -3.6px;
+}
+
+.asset-led-landing .hero-subtitle {
+  max-width: 560px;
+  margin-top: 20px;
+  color: #c3d0dc;
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.55;
+}
+
+.asset-led-landing .launch-actions {
+  gap: 18px;
+  margin-top: 28px;
+}
+
+.asset-led-landing .launch-actions a {
+  min-height: 46px;
+}
+
+.asset-led-landing .hero-primary {
+  min-width: 184px;
+}
+
+.asset-led-landing .secondary-button {
+  min-width: 166px;
+}
+
+.asset-led-landing .hero-claims {
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.asset-led-landing .hero-claims span {
+  min-height: 38px;
+  padding: 9px 13px;
+  border-radius: 11px;
+  background: rgba(10, 27, 39, .68);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.asset-led-landing .hero-disclaimer {
+  max-width: 520px;
+  margin-top: 22px;
+  color: #8495a7;
+}
+
+.asset-hero-product {
+  min-height: 660px;
+  overflow: visible;
+  isolation: isolate;
+}
+
+.hero-orbit {
+  display: none;
+}
+
+.hero-layer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hero-soft-glow {
+  z-index: 1;
+  opacity: .92;
+  transform: scale(1.08);
+  animation: glowBreath 6.4s ease-in-out infinite;
+}
+
+.hero-orbit-lines {
+  z-index: 2;
+  opacity: .9;
+  transform: scale(1.04) translateY(2%);
+}
+
+.hero-coins-cluster {
+  z-index: 3;
+  opacity: .92;
+  animation: cardFloat 7.5s ease-in-out infinite reverse;
+}
+
+.asset-phone-frame {
+  z-index: 4;
+  right: 12%;
+  top: 1%;
+  width: min(380px, 42vw);
+  aspect-ratio: 780 / 1140;
+  filter: drop-shadow(0 44px 72px rgba(0,0,0,.58)) drop-shadow(0 0 38px rgba(22,199,132,.2));
+  animation: phoneLevitate 6.2s ease-in-out infinite;
+}
+
+.asset-phone {
+  object-fit: contain;
+}
+
+.asset-hero-product::before,
+.asset-hero-product::after,
+.asset-coins,
+.asset-verified-pill,
+.phone-html-screen {
+  display: none !important;
+}
+
+@media (max-width: 1180px) {
+  .asset-led-landing .launch-hero {
+    grid-template-columns: minmax(0, .98fr) minmax(420px, .92fr);
+    gap: 30px;
+  }
+
+  .asset-led-landing .hero-copy h1 {
+    font-size: clamp(52px, 5.8vw, 74px);
+  }
+
+  .asset-phone-frame {
+    right: 8%;
+    width: min(350px, 39vw);
+  }
+}
+
+@media (max-width: 1024px) {
+  .asset-led-landing .launch-hero {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .asset-led-landing .hero-copy,
+  .asset-led-landing .hero-copy h1,
+  .asset-led-landing .hero-subtitle,
+  .asset-led-landing .hero-disclaimer {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .asset-led-landing .launch-actions,
+  .asset-led-landing .hero-claims {
+    justify-content: center;
+  }
+
+  .asset-hero-product {
+    width: min(720px, 100%);
+    min-height: 600px;
+    margin-inline: auto;
+  }
+
+  .asset-phone-frame {
+    left: 50%;
+    right: auto;
+    width: min(360px, 52vw);
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 760px) {
+  .asset-led-landing .launch-hero {
+    gap: 18px;
+    padding-top: 26px;
+  }
+
+  .hero-kicker {
+    min-height: 28px;
+    font-size: 9px;
+    letter-spacing: .08em;
+  }
+
+  .asset-led-landing .hero-benefit {
+    font-size: clamp(28px, 9vw, 42px);
+  }
+
+  .asset-led-landing .hero-copy h1 {
+    font-size: clamp(46px, 13.6vw, 62px);
+    line-height: .98;
+    letter-spacing: -2.6px;
+  }
+
+  .asset-led-landing .launch-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .asset-led-landing .launch-actions a {
+    width: 100%;
+  }
+
+  .asset-led-landing .hero-claims {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .asset-hero-product {
+    min-height: 500px;
+  }
+
+  .asset-phone-frame {
+    width: min(310px, 82vw);
+    top: 2%;
+  }
+}
+
+@media (max-width: 390px) {
+  .asset-led-landing .hero-copy h1 {
+    font-size: clamp(43px, 13.1vw, 52px);
+  }
+
+  .asset-phone-frame {
+    width: min(292px, 84vw);
   }
 }
 .brand-loader {
