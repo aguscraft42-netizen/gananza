@@ -3,31 +3,33 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { PublicHeader } from "@/components/PublicHeader";
 import { GananzaLogo } from "@/components/brand/gananza-logo";
-import { LandingCountUp } from "@/components/LandingCountUp";
 
 const benefits = [
   {
-    icon: "/landing/earnings.svg",
+    art: "/landing/digital-wallet-growth.png",
     title: "Ingresos extra",
     copy: "Completá tareas y sumá recompensas según tu actividad.",
+    className: "wallet-art",
   },
   {
-    icon: "/landing/transparent-rewards.svg",
+    art: "/landing/emerald-fintech-assets.png",
     title: "Todo claro desde el inicio",
     copy: "Sabés qué hacer, cuánto suma y cuándo puede validarse.",
+    className: "assets-art",
   },
   {
-    icon: "/landing/secure-withdrawal.svg",
+    art: "/landing/fintech-icons-neon.png",
     title: "Retiro seguro",
     copy: "Solicitá tu saldo disponible mediante métodos verificados.",
+    className: "icons-art",
   },
 ];
 
 const steps = [
-  ["Elegí una tarea", "Revisá las condiciones y la recompensa.", "/landing/tasks.svg"],
-  ["Completá el objetivo", "Seguí las instrucciones sin perder la atribución.", "/landing/progress.svg"],
-  ["Esperá la validación", "El proveedor confirma que se cumplió correctamente.", "/landing/verified-status.svg"],
-  ["Retirá tu saldo", "Cuando quede disponible, elegí tu método de retiro.", "/landing/secure-withdrawal.svg"],
+  ["Elegí una tarea", "Revisá el objetivo, el tiempo estimado, la vigencia y las condiciones.", "task"],
+  ["Completá el objetivo", "Empezá desde Gananza y seguí el progreso sin perder la atribución.", "bolt"],
+  ["Esperá la validación", "El proveedor confirma que se cumplió correctamente.", "clock"],
+  ["Retirá tu saldo", "Cuando quede disponible, elegí tu método de retiro.", "wallet"],
 ];
 
 const states = [
@@ -45,7 +47,7 @@ export default function HomePage() {
   return (
     <>
       <PublicHeader />
-      <main className="launch-page">
+      <main className="launch-page asset-led-landing">
         <section className="launch-hero public-shell">
           <div className="hero-copy launch-reveal">
             <p className="hero-benefit">GENERÁ INGRESOS EXTRA</p>
@@ -63,46 +65,47 @@ export default function HomePage() {
             <p className="hero-disclaimer">Las recompensas dependen de completar y validar cada tarea. Gananza no garantiza ingresos fijos.</p>
           </div>
 
-          <div className="hero-product" aria-label="Vista previa del producto Gananza">
+          <div className="hero-product asset-hero-product" aria-label="Vista previa visual de Gananza">
             <div className="hero-orbit" aria-hidden="true" />
-            <Image className="hero-coins coins-a" src="/landing/hero-coins.svg" width={220} height={160} alt="" aria-hidden="true" priority />
-            <Image className="hero-ring" src="/landing/hero-progress-ring.svg" width={160} height={160} alt="" aria-hidden="true" priority />
-            <article className="hero-phone" aria-label="Mockup de saldo y tareas">
-              <div className="phone-speaker" />
-              <div className="phone-top">
-                <span>Hola, Agus</span>
-                <i />
-              </div>
-              <div className="phone-balance-panel">
-                <small>Saldo disponible</small>
-                <strong><LandingCountUp value={8650} /></strong>
+            <div className="asset-phone-frame">
+              <Image className="asset-phone" src="/landing/smartphone-gananza.png" width={640} height={960} alt="Aplicación Gananza mostrando saldo, tareas y recompensas" priority />
+              <div className="phone-html-screen" aria-hidden="true">
+                <div className="phone-html-brand"><span>G</span><strong>Gananza</strong></div>
+                <p>Hola, Agus</p>
+                <strong className="phone-html-balance">$ 8.650</strong>
                 <button type="button">Retirar saldo</button>
+                <article>
+                  <small>Tarea destacada</small>
+                  <h3>Encuesta recomendada</h3>
+                  <div><span>Opinión verificada</span><b>+$650</b></div>
+                </article>
+                <ul>
+                  <li><span>Juego rápido</span><b>+$420</b></li>
+                  <li><span>App aprobada</span><b>+$300</b></li>
+                  <li><span>Pago transferido</span><b>$1.200</b></li>
+                </ul>
               </div>
-              <div className="phone-task-panel">
-                <span>Tarea destacada</span>
-                <h3>Encuesta de opinión</h3>
-                <p>75 min · validación por proveedor</p>
-                <div><b>+$650</b><em>Disponible</em></div>
-              </div>
-              <div className="phone-progress">
-                <span><b>68%</b> progreso</span>
-                <i><u /></i>
-              </div>
-            </article>
-            <Image className="floating-card balance-float" src="/landing/hero-balance-card.svg" width={260} height={152} alt="Tarjeta visual de saldo disponible" />
-            <Image className="floating-card task-float" src="/landing/hero-task-card.svg" width={270} height={143} alt="Tarjeta visual de tarea recomendada" />
+            </div>
+            <Image className="asset-coins asset-coins-a" src="/landing/emerald-coins-rewards.png" width={520} height={347} alt="" aria-hidden="true" priority />
+            <Image className="asset-coins asset-coins-b" src="/landing/emerald-coins-rewards.png" width={520} height={347} alt="" aria-hidden="true" />
+            <div className="asset-verified-pill">
+              <span />
+              <strong>Tarea verificada</strong>
+            </div>
           </div>
         </section>
 
         <section id="beneficios" className="launch-section public-shell launch-reveal">
           <div className="launch-section-head">
             <span>Beneficios</span>
-            <h2>Una forma simple y controlada de sumar valor con tu actividad.</h2>
+            <h2>Una experiencia clara para convertir actividad en recompensas.</h2>
           </div>
-          <div className="benefit-grid">
+          <div className="benefit-grid asset-benefit-grid">
             {benefits.map((benefit) => (
-              <article className="benefit-tile" key={benefit.title}>
-                <Image src={benefit.icon} width={58} height={58} alt="" aria-hidden="true" />
+              <article className="benefit-tile asset-benefit-tile" key={benefit.title}>
+                <div className={`benefit-art ${benefit.className}`}>
+                  <Image src={benefit.art} width={520} height={347} alt="" aria-hidden="true" />
+                </div>
                 <h3>{benefit.title}</h3>
                 <p>{benefit.copy}</p>
               </article>
@@ -113,13 +116,15 @@ export default function HomePage() {
         <section id="como-funciona" className="launch-section process-section public-shell launch-reveal">
           <div className="launch-section-head">
             <span>Cómo funciona</span>
-            <h2>Cuatro pasos conectados, sin saldos ambiguos.</h2>
+            <h2>Cuatro pasos conectados, con señales visuales en cada avance.</h2>
           </div>
-          <div className="process-track">
-            {steps.map(([title, copy, icon], index) => (
-              <article className="process-step" key={title} style={{ "--step": index } as CSSProperties}>
+          <div className="process-track asset-process-track">
+            {steps.map(([title, copy, tone], index) => (
+              <article className={`process-step asset-process-step ${tone}`} key={title} style={{ "--step": index } as CSSProperties}>
                 <span className="step-number">0{index + 1}</span>
-                <Image src={icon} width={42} height={42} alt="" aria-hidden="true" />
+                <div className="step-icon-crop" aria-hidden="true">
+                  <Image src="/landing/fintech-icons-neon.png" width={1536} height={1024} alt="" />
+                </div>
                 <h3>{title}</h3>
                 <p>{copy}</p>
               </article>
@@ -129,19 +134,21 @@ export default function HomePage() {
 
         <section id="seguridad" className="launch-section states-section public-shell launch-reveal">
           <div className="launch-section-head">
-            <span>Estados de recompensa</span>
-            <h2>Cada tarea muestra dónde está tu recompensa.</h2>
+            <span>Estados</span>
+            <h2>Cada recompensa muestra su estado real.</h2>
           </div>
-          <div className="state-editorial">
-            <div className="state-spotlight">
-              <Image src="/landing/verified-status.svg" width={72} height={72} alt="" aria-hidden="true" />
+          <div className="state-editorial asset-state-editorial">
+            <div className="state-spotlight asset-state-spotlight">
+              <Image src="/landing/emerald-fintech-assets.png" width={640} height={427} alt="" aria-hidden="true" />
               <strong>Seguimiento visible</strong>
               <p>Gananza separa lo disponible, lo pendiente y lo confirmado para que sepas qué podés retirar.</p>
             </div>
-            <div className="state-flow">
+            <div className="state-flow asset-state-flow">
               {states.map(([title, copy, tone], index) => (
-                <article className={`reward-state ${tone}`} key={title} style={{ "--state": index } as CSSProperties}>
-                  <i aria-hidden="true" />
+                <article className={`reward-state asset-reward-state ${tone}`} key={title} style={{ "--state": index } as CSSProperties}>
+                  <div className="state-icon-crop" aria-hidden="true">
+                    <Image src="/landing/fintech-icons-neon.png" width={1536} height={1024} alt="" />
+                  </div>
                   <strong>{title}</strong>
                   <span>{copy}</span>
                 </article>
@@ -150,14 +157,18 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section className="launch-final-cta public-shell launch-reveal">
-          <div>
+        <section className="launch-final-cta public-shell launch-reveal asset-final-cta">
+          <div className="final-cta-copy">
             <span>GANANZA</span>
             <h2>Empezá a generar ingresos extra con Gananza.</h2>
             <p>Encontrá tareas, conocé la recompensa y seguí cada paso hasta que tu saldo esté disponible.</p>
             <Link href="/acceso" className="primary-button">Crear mi cuenta</Link>
+            <p className="final-note">Registrarte no tiene costo. Las tareas disponibles pueden variar según perfil y ubicación.</p>
           </div>
-          <p className="final-note">Registrarte no tiene costo. Las tareas disponibles varían según perfil y ubicación.</p>
+          <div className="final-cta-art" aria-hidden="true">
+            <Image className="final-wallet" src="/landing/digital-wallet-growth.png" width={720} height={480} alt="" />
+            <Image className="final-coins" src="/landing/emerald-coins-rewards.png" width={620} height={413} alt="" />
+          </div>
         </section>
       </main>
 

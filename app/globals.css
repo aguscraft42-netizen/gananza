@@ -2650,7 +2650,7 @@ body::before { opacity: .018; }
   bottom: -26%;
   width: 48%;
   height: 70%;
-  background: url("/landing/hero-coins.svg") center / contain no-repeat;
+  background: url("/landing/emerald-coins-rewards.png") center / contain no-repeat;
   opacity: .55;
   pointer-events: none;
 }
@@ -2910,6 +2910,581 @@ body::before { opacity: .018; }
     animation: none !important;
     transition: none !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* Asset-led landing refinement */
+.asset-led-landing {
+  background:
+    radial-gradient(circle at 8% 8%, rgba(22,199,132,.19), transparent 25%),
+    radial-gradient(circle at 82% 10%, rgba(244,182,31,.08), transparent 22%),
+    radial-gradient(circle at 58% 42%, rgba(45,212,191,.09), transparent 28%),
+    linear-gradient(145deg, #040b13 0%, #07131f 50%, #030910 100%);
+}
+
+.asset-led-landing .launch-hero {
+  grid-template-columns: minmax(0, .92fr) minmax(520px, 1.08fr);
+  min-height: calc(100vh - 78px);
+  padding-top: clamp(30px, 5vw, 64px);
+}
+
+.asset-hero-product {
+  min-height: 720px;
+  isolation: isolate;
+}
+
+.asset-hero-product::before,
+.asset-hero-product::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  border-radius: 999px;
+}
+
+.asset-hero-product::before {
+  inset: 8% -12% 6% 0;
+  background:
+    radial-gradient(circle at 58% 48%, rgba(22,199,132,.34), transparent 30%),
+    radial-gradient(circle at 56% 44%, rgba(244,182,31,.12), transparent 15%);
+  filter: blur(12px);
+  animation: glowBreath 5.8s ease-in-out infinite;
+}
+
+.asset-hero-product::after {
+  left: 5%;
+  right: 2%;
+  top: 28%;
+  height: 38%;
+  border: 1px solid rgba(57,218,160,.22);
+  transform: rotate(-13deg);
+  mask-image: linear-gradient(90deg, transparent, #000 22%, #000 80%, transparent);
+}
+
+.asset-phone-frame {
+  position: absolute;
+  z-index: 4;
+  right: 8%;
+  top: -4%;
+  width: min(470px, 72vw);
+  height: auto;
+  aspect-ratio: 2 / 3;
+  filter: drop-shadow(0 46px 74px rgba(0,0,0,.58)) drop-shadow(0 0 42px rgba(22,199,132,.18));
+  transform: rotate(2deg);
+  animation: phoneLevitate 6.2s ease-in-out infinite;
+}
+
+.asset-phone {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.phone-html-screen {
+  position: absolute;
+  left: 24.5%;
+  top: 9.8%;
+  width: 55.6%;
+  height: 76.8%;
+  z-index: 2;
+  padding: 7.2% 6.8%;
+  overflow: hidden;
+  clip-path: polygon(8% 0, 95% 5%, 100% 93%, 11% 100%, 0 8%);
+  border-radius: 29px;
+  color: white;
+  background:
+    radial-gradient(circle at 82% 22%, rgba(22,199,132,.18), transparent 28%),
+    radial-gradient(circle at 18% 88%, rgba(45,212,191,.14), transparent 28%),
+    linear-gradient(160deg, #031019 0%, #071723 58%, #02080d 100%);
+  transform: rotate(3.7deg) skewY(.45deg);
+  box-shadow: inset 0 0 0 1px rgba(57,218,160,.2), inset 0 18px 40px rgba(255,255,255,.035);
+}
+
+.phone-html-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 18px;
+}
+
+.phone-html-brand span {
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: #06120e;
+  background: linear-gradient(135deg, var(--green), #2dd4bf);
+  font-weight: 950;
+}
+
+.phone-html-brand strong { font-size: 15px; }
+.phone-html-screen p {
+  margin: 0 0 5px;
+  color: #d7e3ec;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.phone-html-balance {
+  display: block;
+  margin-bottom: 10px;
+  font-size: clamp(30px, 4vw, 42px);
+  letter-spacing: -1.4px;
+}
+
+.phone-html-screen button {
+  min-height: 36px;
+  width: 76%;
+  border: 0;
+  border-radius: 12px;
+  color: #02140c;
+  background: linear-gradient(135deg, #27ee9a, #16c784);
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.phone-html-screen article,
+.phone-html-screen li {
+  border: 1px solid rgba(57,218,160,.18);
+  background: rgba(255,255,255,.035);
+}
+
+.phone-html-screen article {
+  margin-top: 16px;
+  padding: 13px;
+  border-radius: 16px;
+}
+
+.phone-html-screen article small {
+  color: #8fa1b6;
+  font-size: 9px;
+  font-weight: 850;
+}
+
+.phone-html-screen article h3 {
+  margin: 6px 0 8px;
+  font-size: 14px;
+}
+
+.phone-html-screen article div,
+.phone-html-screen li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.phone-html-screen article span,
+.phone-html-screen li span {
+  color: #a8b8c7;
+  font-size: 10px;
+}
+
+.phone-html-screen b {
+  color: var(--green-2);
+  font-size: 12px;
+}
+
+.phone-html-screen ul {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.phone-html-screen li {
+  padding: 10px;
+  border-radius: 13px;
+}
+
+.asset-coins {
+  position: absolute;
+  z-index: 2;
+  width: min(360px, 42vw);
+  height: auto;
+  opacity: .92;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 24px 46px rgba(0,0,0,.32));
+  mask-image: radial-gradient(ellipse at center, #000 34%, rgba(0,0,0,.88) 54%, transparent 78%);
+}
+
+.asset-coins-a {
+  left: -10%;
+  top: 28%;
+  clip-path: inset(0 58% 32% 0 round 22px);
+  transform: scale(1.45);
+  animation: driftCoin 7.2s ease-in-out infinite;
+}
+
+.asset-coins-b {
+  right: -14%;
+  bottom: 8%;
+  clip-path: inset(42% 0 0 48% round 22px);
+  transform: scale(1.55);
+  animation: cardFloat 8s ease-in-out infinite reverse;
+}
+
+.asset-verified-pill {
+  position: absolute;
+  right: 0;
+  top: 18%;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 16px;
+  border: 1px solid rgba(57,218,160,.26);
+  border-radius: 18px;
+  color: #dff9ef;
+  background: rgba(5, 20, 28, .72);
+  box-shadow: 0 24px 60px rgba(0,0,0,.36), inset 0 1px 0 rgba(255,255,255,.07);
+  backdrop-filter: blur(14px);
+  animation: cardFloat 6.6s ease-in-out infinite;
+}
+
+.asset-verified-pill span {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #b7ffe2, var(--green) 62%, #086145);
+  box-shadow: 0 0 22px rgba(22,199,132,.65);
+}
+
+.asset-benefit-grid {
+  gap: 22px;
+}
+
+.asset-benefit-tile {
+  min-height: 370px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.benefit-art {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: .9;
+  background: #06111d;
+}
+
+.benefit-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 70% 10%, rgba(22,199,132,.08), transparent 34%),
+    linear-gradient(180deg, rgba(7,18,29,.16) 0%, rgba(7,18,29,.48) 44%, rgba(7,18,29,.98) 84%);
+}
+
+.benefit-art img {
+  position: absolute;
+  width: 145%;
+  max-width: none;
+  height: auto;
+  filter: saturate(1.05) contrast(1.04);
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(ellipse at center, #000 44%, rgba(0,0,0,.9) 66%, transparent 86%);
+}
+
+.wallet-art img {
+  left: -34%;
+  top: -5%;
+}
+
+.assets-art img {
+  left: -20%;
+  top: -18%;
+}
+
+.icons-art img {
+  width: 168%;
+  left: -36%;
+  top: -27%;
+}
+
+.asset-benefit-tile h3,
+.asset-benefit-tile p {
+  position: relative;
+  z-index: 1;
+}
+
+.asset-benefit-tile h3 {
+  margin-top: 140px;
+}
+
+.asset-process-track::before {
+  background: linear-gradient(90deg, rgba(22,199,132,.95), rgba(45,212,191,.95), rgba(244,182,31,.45), rgba(255,255,255,.12));
+  box-shadow: 0 0 24px rgba(22,199,132,.22);
+}
+
+.asset-process-step {
+  overflow: hidden;
+  min-height: 285px;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(22,199,132,.1), transparent 35%),
+    rgba(9,23,35,.88);
+}
+
+.asset-process-step::after {
+  content: "";
+  position: absolute;
+  inset: auto 18px 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(57,218,160,.48), transparent);
+}
+
+.step-icon-crop,
+.state-icon-crop {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(57,218,160,.17);
+  background: rgba(22,199,132,.055);
+}
+
+.step-icon-crop::after,
+.state-icon-crop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 36%, rgba(6,17,29,.36) 66%, rgba(6,17,29,.82) 100%);
+  pointer-events: none;
+}
+
+.step-icon-crop {
+  width: 70px;
+  height: 70px;
+  border-radius: 22px;
+}
+
+.step-icon-crop img,
+.state-icon-crop img {
+  position: absolute;
+  width: 520px;
+  max-width: none;
+  height: auto;
+  mix-blend-mode: screen;
+}
+
+.asset-process-step.task .step-icon-crop img { left: -155px; top: -44px; }
+.asset-process-step.bolt .step-icon-crop img { left: -1000px; top: -48px; }
+.asset-process-step.clock .step-icon-crop img { left: -665px; top: -424px; }
+.asset-process-step.wallet .step-icon-crop img { left: -94px; top: -766px; }
+
+.asset-state-editorial {
+  grid-template-columns: minmax(320px, .9fr) minmax(0, 1.1fr);
+}
+
+.asset-state-spotlight {
+  position: relative;
+  min-height: 520px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: #06111d;
+}
+
+.asset-state-spotlight > img {
+  position: absolute;
+  inset: -5% auto auto -22%;
+  width: 150%;
+  height: auto;
+  max-width: none;
+  opacity: .86;
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(ellipse at center, #000 50%, rgba(0,0,0,.82) 68%, transparent 88%);
+}
+
+.asset-state-spotlight::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 12%, rgba(8,19,29,.4) 52%, rgba(8,19,29,.96) 86%);
+}
+
+.asset-state-spotlight strong,
+.asset-state-spotlight p {
+  position: relative;
+  z-index: 1;
+}
+
+.asset-state-flow {
+  gap: 14px;
+}
+
+.asset-reward-state {
+  overflow: hidden;
+  min-height: 175px;
+  padding-top: 18px;
+}
+
+.asset-reward-state > i {
+  display: none;
+}
+
+.state-icon-crop {
+  width: 58px;
+  height: 58px;
+  margin-bottom: 17px;
+  border-radius: 18px;
+}
+
+.asset-reward-state.available .state-icon-crop img { left: -95px; top: -438px; }
+.asset-reward-state.progress .state-icon-crop img { left: -455px; top: -430px; }
+.asset-reward-state.pending .state-icon-crop img { left: -456px; top: -438px; }
+.asset-reward-state.confirmed .state-icon-crop img { left: -95px; top: -438px; }
+.asset-reward-state.rejected .state-icon-crop img { left: -818px; top: -438px; }
+.asset-reward-state.finished .state-icon-crop img { left: -1188px; top: -438px; }
+
+.asset-final-cta {
+  display: grid;
+  grid-template-columns: minmax(0, .9fr) minmax(340px, .85fr);
+  align-items: center;
+  min-height: 460px;
+  overflow: hidden;
+}
+
+.asset-final-cta::after {
+  display: none;
+}
+
+.final-cta-copy {
+  position: relative;
+  z-index: 2;
+}
+
+.final-cta-art {
+  position: relative;
+  min-height: 380px;
+  z-index: 1;
+}
+
+.final-wallet,
+.final-coins {
+  position: absolute;
+  max-width: none;
+  height: auto;
+  filter: drop-shadow(0 32px 64px rgba(0,0,0,.38));
+  mask-image: radial-gradient(ellipse at center, #000 52%, rgba(0,0,0,.86) 70%, transparent 90%);
+}
+
+.final-wallet {
+  width: 760px;
+  right: -230px;
+  top: -58px;
+  border-radius: 28px;
+  animation: productEnter .85s ease both;
+  mix-blend-mode: screen;
+}
+
+.final-coins {
+  width: 610px;
+  right: -180px;
+  bottom: -128px;
+  mix-blend-mode: screen;
+  opacity: .82;
+  mix-blend-mode: screen;
+  animation: driftCoin 8s ease-in-out infinite;
+}
+
+@keyframes phoneLevitate {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  50% { translate: 0 -14px; rotate: -.8deg; }
+}
+
+@media (max-width: 1100px) {
+  .asset-led-landing .launch-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .asset-hero-product {
+    min-height: 690px;
+  }
+
+  .asset-phone-frame {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%) rotate(1.5deg);
+  }
+
+  .asset-benefit-grid,
+  .asset-state-editorial,
+  .asset-final-cta {
+    grid-template-columns: 1fr;
+  }
+
+  .final-cta-art {
+    min-height: 320px;
+  }
+
+  .final-wallet {
+    right: -110px;
+    top: -60px;
+  }
+}
+
+@media (max-width: 760px) {
+  .asset-led-landing .launch-hero {
+    padding-top: 28px;
+  }
+
+  .asset-hero-product {
+    min-height: 560px;
+  }
+
+  .asset-phone-frame {
+    width: min(400px, 92vw);
+    top: -2%;
+  }
+
+  .asset-coins-a {
+    left: -30%;
+    top: 34%;
+  }
+
+  .asset-coins-b {
+    right: -38%;
+    bottom: 0;
+  }
+
+  .asset-verified-pill {
+    right: 4%;
+    top: 12%;
+    transform: scale(.86);
+  }
+
+  .asset-benefit-tile {
+    min-height: 330px;
+  }
+
+  .asset-state-spotlight {
+    min-height: 430px;
+  }
+
+  .asset-state-flow {
+    grid-template-columns: 1fr;
+  }
+
+  .asset-final-cta {
+    min-height: 620px;
+  }
+
+  .final-wallet {
+    width: 650px;
+    right: -245px;
+    top: 0;
+  }
+
+  .final-coins {
+    width: 520px;
+    right: -220px;
+    bottom: -115px;
   }
 }
 .brand-loader {
