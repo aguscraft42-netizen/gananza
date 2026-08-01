@@ -18,10 +18,10 @@ const benefits = [
     className: "assets-art",
   },
   {
-    art: "/landing/fintech-icons-neon.png",
+    art: "/landing/emerald-fintech-assets.png",
     title: "Retiro seguro",
     copy: "Solicitá tu saldo disponible mediante métodos verificados.",
-    className: "icons-art",
+    className: "secure-art",
   },
 ];
 
@@ -68,7 +68,7 @@ export default function HomePage() {
           <div className="hero-product asset-hero-product" aria-label="Vista previa visual de Gananza">
             <div className="hero-orbit" aria-hidden="true" />
             <div className="asset-phone-frame">
-              <Image className="asset-phone" src="/landing/smartphone-gananza.png" width={640} height={960} alt="Aplicación Gananza mostrando saldo, tareas y recompensas" priority />
+              <Image className="asset-phone" src="/landing/smartphone-clean.png" width={640} height={960} alt="Aplicación Gananza mostrando saldo, tareas y recompensas" priority />
               <div className="phone-html-screen" aria-hidden="true">
                 <div className="phone-html-brand"><span>G</span><strong>Gananza</strong></div>
                 <p>Hola, Agus</p>
