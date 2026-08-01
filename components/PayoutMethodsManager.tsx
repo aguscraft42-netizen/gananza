@@ -1,13 +1,16 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { MercadoPagoLogo } from "@/components/MercadoPagoLogo";
 import { Icon } from "@/components/Icons";
+import { CategoryIcon } from "@/components/ui/category-icon";
+
+type PayoutMethodType = "mercado_pago" | "bank_transfer";
 
 type Method = {
   id: string;
-  method_type: string;
+  method_type: PayoutMethodType | string;
   label: string;
   destination_masked: string;
   holder_name?: string | null;
@@ -28,16 +31,11 @@ function maskDestination(value: string) {
   return `${trimmed.slice(0, 3)}••••${trimmed.slice(-3)}`;
 }
 
-function isValidMercadoPagoDestination(value: string) {
+function isValidDestination(value: string) {
   const destination = normalizeDestination(value);
-  const isCvu = /^\d{22}$/.test(destination);
+  const isAccount = /^\d{22}$/.test(destination);
   const isAlias = /^[a-z0-9][a-z0-9._-]{4,29}[a-z0-9]$/.test(destination);
-  return isCvu || isAlias;
-}
-
-function isValidBankDestination(value: string) {
-  const destination = normalizeDestination(value);
-  return /^\d{22}$/.test(destination) || /^[a-z0-9][a-z0-9._-]{4,29}[a-z0-9]$/.test(destination);
+  return isAccount || isAlias;
 }
 
 function isValidDocument(value: string) {
@@ -45,10 +43,14 @@ function isValidDocument(value: string) {
   return digits.length >= 7 && digits.length <= 11;
 }
 
+function methodLabel(type: string) {
+  return type === "mercado_pago" ? "Mercado Pago" : "Transferencia a otro banco";
+}
+
 export function PayoutMethodsManager({ initialMethods, realMode }: { initialMethods: Method[]; realMode: boolean }) {
   const [methods, setMethods] = useState(initialMethods);
   const [open, setOpen] = useState(false);
-  const [type, setType] = useState("mercado_pago");
+  const [type, setType] = useState<PayoutMethodType>("mercado_pago");
   const [destination, setDestination] = useState("");
   const [holder, setHolder] = useState("");
   const [document, setDocument] = useState("");
@@ -56,15 +58,12 @@ export function PayoutMethodsManager({ initialMethods, realMode }: { initialMeth
   const [busy, setBusy] = useState(false);
   const [now] = useState(() => Date.now());
 
-  const destinationValid = useMemo(
-    () => type === "mercado_pago" ? isValidMercadoPagoDestination(destination) : isValidBankDestination(destination),
-    [destination, type],
-  );
+  const destinationValid = useMemo(() => isValidDestination(destination), [destination]);
   const holderValid = holder.trim().length >= 4;
   const documentValid = isValidDocument(document);
   const formValid = destinationValid && holderValid && documentValid;
 
-  async function addMethod(event: React.FormEvent) {
+  async function addMethod(event: FormEvent) {
     event.preventDefault();
     setMessage("");
     if (!formValid) {
@@ -77,7 +76,7 @@ export function PayoutMethodsManager({ initialMethods, realMode }: { initialMeth
     const method: Method = {
       id: realMode ? crypto.randomUUID() : `demo-${Date.now()}`,
       method_type: type,
-      label: type === "mercado_pago" ? "Mercado Pago" : "Transferencia bancaria",
+      label: methodLabel(type),
       destination_masked: maskDestination(normalizedDestination),
       holder_name: holder.trim(),
       holder_document: document.replace(/\D/g, ""),
@@ -121,16 +120,17 @@ export function PayoutMethodsManager({ initialMethods, realMode }: { initialMeth
     <div className="payout-manager">
       <div className="settings-list payout-method-list">
         {methods.map((method) => {
+          const isMercadoPago = method.method_type === "mercado_pago";
           const coolingDown = method.cooldown_until && new Date(method.cooldown_until).getTime() > now;
           return (
-            <div className={`setting-row static payout-method-row ${method.method_type === "mercado_pago" ? "mercado-pago-row" : ""}`} key={method.id}>
-              <span className={`method-icon ${method.method_type === "mercado_pago" ? "mp branded" : "bank"}`}>
-                {method.method_type === "mercado_pago" ? <MercadoPagoLogo compact /> : <Icon name="money" size={21}/>}
+            <div className={`setting-row static payout-method-row ${isMercadoPago ? "mercado-pago-row" : ""}`} key={method.id}>
+              <span className={`method-icon ${isMercadoPago ? "mp branded" : "bank"}`}>
+                {isMercadoPago ? <MercadoPagoLogo compact /> : <CategoryIcon type="other-bank" size={32} />}
               </span>
               <span className="setting-copy">
                 <strong>
-                  {method.label}{method.is_default ? " · Principal" : ""}
-                  {method.method_type === "mercado_pago" && <em className="recommended-tag">Recomendado</em>}
+                  {methodLabel(method.method_type)}{method.is_default ? " · Principal" : ""}
+                  {isMercadoPago && <em className="recommended-tag">Recomendado</em>}
                 </strong>
                 <small>{method.destination_masked} · {method.holder_name || "Titular pendiente"}</small>
                 <small className={method.is_verified ? "verified-copy" : "pending-copy"}>
@@ -162,17 +162,17 @@ export function PayoutMethodsManager({ initialMethods, realMode }: { initialMeth
               <span><strong>Mercado Pago</strong><small>Recomendado para Argentina</small></span>
             </button>
             <button type="button" className={type === "bank_transfer" ? "active" : ""} onClick={() => setType("bank_transfer")}>
-              <span className="bank-mini-icon"><Icon name="money" size={18}/></span>
-              <span><strong>Transferencia</strong><small>CBU o alias bancario</small></span>
+              <span className="bank-mini-icon"><CategoryIcon type="other-bank" size={24} /></span>
+              <span><strong>Transferencia a otro banco</strong><small>CBU, CVU o alias de otra entidad</small></span>
             </button>
           </div>
 
           <label>
-            {type === "mercado_pago" ? "Alias o CVU de Mercado Pago" : "Alias o CBU"}
+            {type === "mercado_pago" ? "Alias o CVU de Mercado Pago" : "CBU, CVU o alias de otra entidad"}
             <input
               value={destination}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDestination(event.target.value)}
-              placeholder={type === "mercado_pago" ? "tu.alias.mp o 22 dígitos" : "alias.bancario o 22 dígitos"}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => setDestination(event.target.value)}
+              placeholder={type === "mercado_pago" ? "tu.alias.mp o 22 dígitos" : "alias.banco o 22 dígitos"}
               autoComplete="off"
               aria-invalid={destination.length > 0 && !destinationValid}
               required
@@ -181,15 +181,15 @@ export function PayoutMethodsManager({ initialMethods, realMode }: { initialMeth
           </label>
 
           <label>
-            Nombre completo del titular
-            <input value={holder} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setHolder(event.target.value)} placeholder="Como figura en la cuenta" required />
+            Titular
+            <input value={holder} onChange={(event: ChangeEvent<HTMLInputElement>) => setHolder(event.target.value)} placeholder="Nombre completo como figura en la cuenta" required />
           </label>
 
           <label>
-            DNI o CUIL/CUIT del titular
+            DNI o CUIL/CUIT
             <input
               value={document}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => setDocument(event.target.value.replace(/[^0-9-]/g, ""))}
+              onChange={(event: ChangeEvent<HTMLInputElement>) => setDocument(event.target.value.replace(/[^0-9-]/g, ""))}
               inputMode="numeric"
               placeholder="Solo para validar el destino"
               aria-invalid={document.length > 0 && !documentValid}
@@ -199,7 +199,7 @@ export function PayoutMethodsManager({ initialMethods, realMode }: { initialMeth
           </label>
 
           <div className="mp-security-note">
-            <span><Icon name="shield" size={18}/></span>
+            <span><Icon name="shield" size={18} /></span>
             <div>
               <strong>Protección ante cambios</strong>
               <p>Un destino nuevo queda en revisión durante 24 horas. El primer retiro también se revisa manualmente.</p>
@@ -207,7 +207,7 @@ export function PayoutMethodsManager({ initialMethods, realMode }: { initialMeth
           </div>
 
           <button className="primary-button button-wide" disabled={busy || !formValid}>
-            {busy ? "Guardando…" : type === "mercado_pago" ? "Guardar Mercado Pago" : "Guardar transferencia"}
+            {busy ? "Guardando…" : type === "mercado_pago" ? "Guardar Mercado Pago" : "Guardar transferencia a otro banco"}
           </button>
           <p className="provider-disclaimer">Mercado Pago es un servicio externo. Su logo se utiliza únicamente para identificar el destino elegido.</p>
         </form>

@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ChangeEvent } from "react";
 import { MercadoPagoLogo } from "@/components/MercadoPagoLogo";
 import { Icon } from "@/components/Icons";
+import { CategoryIcon } from "@/components/ui/category-icon";
 
 type Method = {
   id: string;
@@ -14,6 +15,11 @@ type Method = {
   is_verified?: boolean;
   cooldown_until?: string | null;
 };
+
+function methodLabel(method?: Method) {
+  if (!method) return "";
+  return method.method_type === "mercado_pago" ? "Mercado Pago" : "Transferencia a otro banco";
+}
 
 function statusCopy(method?: Method) {
   if (!method) return "";
@@ -63,8 +69,8 @@ export function WithdrawalWizard({ available, methods, realMode }: { available: 
         <MercadoPagoLogo className="withdrawal-empty-logo" />
         <span className="eyebrow">RETIROS</span>
         <h2>Agregá Mercado Pago.</h2>
-        <p>Registrá tu alias o CVU, titular y documento para solicitar retiros cuando tengas saldo confirmado.</p>
-        <a className="primary-button button-wide" href="/perfil">Agregar Mercado Pago</a>
+        <p>Registrá tu alias o CVU de Mercado Pago, titular y DNI o CUIL/CUIT para solicitar retiros cuando tengas saldo confirmado.</p>
+        <a className="primary-button button-wide" href="/perfil">Agregar método de retiro</a>
       </aside>
     );
   }
@@ -77,18 +83,19 @@ export function WithdrawalWizard({ available, methods, realMode }: { available: 
         <span className="eyebrow">SOLICITUD ENVIADA</span>
         <h2>Tu retiro está en revisión.</h2>
         <p>
-          Retiro de <strong>${amount.toLocaleString("es-AR")}</strong> a {method?.label}. {realMode ? "El saldo quedó retenido de forma transaccional." : "En esta demo no se mueve dinero real."}
+          Retiro de <strong>${amount.toLocaleString("es-AR")}</strong> a {methodLabel(method)}. {realMode ? "El saldo quedó retenido de forma transaccional." : "En esta demo no se mueve dinero real."}
         </p>
         <div className="withdrawal-timeline compact-timeline">
-          <div className="done"><i><Icon name="check" size={14}/></i><span><strong>Solicitado</strong><small>Saldo retenido</small></span></div>
+          <div className="done"><i><Icon name="check" size={14} /></i><span><strong>Solicitado</strong><small>Saldo retenido</small></span></div>
           <div className="active"><i>2</i><span><strong>Revisión</strong><small>Identidad y destino</small></span></div>
           <div><i>3</i><span><strong>Transferencia</strong><small>Comprobante y referencia</small></span></div>
         </div>
         <div className="receipt-box">
           <div><span>Identificador</span><strong>{receiptId.slice(0, 18)}</strong></div>
           <div><span>Estado</span><strong className="state-pending">En revisión</strong></div>
+          <div><span>Método</span><strong>{methodLabel(method)}</strong></div>
           <div><span>Destino</span><strong>{method?.destination_masked}</strong></div>
-          <div><span>Plazo informado</span><strong>Hasta 48 h hábiles</strong></div>
+          <div><span>Plazo informado</span><strong>{isMercadoPago ? "Prioritario" : "Hasta 48 h hábiles"}</strong></div>
         </div>
         <button className="secondary-button button-wide" onClick={() => { setStep(1); setReceiptId(""); }}>Volver</button>
       </aside>
@@ -107,45 +114,47 @@ export function WithdrawalWizard({ available, methods, realMode }: { available: 
       </div>
 
       <div className="withdraw-steps" aria-label={`Paso ${step} de 3`}>
-        <span className={step >= 1 ? "active" : ""}>1</span><i className={step >= 2 ? "active" : ""}/>
-        <span className={step >= 2 ? "active" : ""}>2</span><i className={step >= 3 ? "active" : ""}/>
+        <span className={step >= 1 ? "active" : ""}>1</span><i className={step >= 2 ? "active" : ""} />
+        <span className={step >= 2 ? "active" : ""}>2</span><i className={step >= 3 ? "active" : ""} />
         <span className={step >= 3 ? "active" : ""}>3</span>
       </div>
 
       {step === 1 && (
         <div className="method-grid">
-          {orderedMethods.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className={`method-card ${item.method_type === "mercado_pago" ? "mercado-pago-card" : ""} ${methodId === item.id ? "selected" : ""}`}
-              onClick={() => setMethodId(item.id)}
-            >
-              <span className={`method-icon ${item.method_type === "mercado_pago" ? "mp branded" : "bank"}`}>
-                {item.method_type === "mercado_pago" ? <MercadoPagoLogo compact /> : <Icon name="money" size={21}/>}
-              </span>
-              <div>
-                <strong>{item.label}{item.method_type === "mercado_pago" && <em className="recommended-tag">Recomendado</em>}</strong>
-                <small>{item.destination_masked}</small>
-                <small className="method-security-copy">{statusCopy(item)}</small>
-              </div>
-              <i><Icon name="check" size={14}/></i>
-            </button>
-          ))}
+          {orderedMethods.map((item) => {
+            const itemIsMercadoPago = item.method_type === "mercado_pago";
+            return (
+              <button
+                key={item.id}
+                type="button"
+                className={`method-card ${itemIsMercadoPago ? "mercado-pago-card" : ""} ${methodId === item.id ? "selected" : ""}`}
+                aria-pressed={methodId === item.id}
+                onClick={() => setMethodId(item.id)}
+              >
+                <span className={`method-icon ${itemIsMercadoPago ? "mp branded" : "bank"}`}>
+                  {itemIsMercadoPago ? <MercadoPagoLogo compact /> : <CategoryIcon type="other-bank" size={32} />}
+                </span>
+                <div>
+                  <strong>{methodLabel(item)}{itemIsMercadoPago && <em className="recommended-tag">Recomendado</em>}</strong>
+                  <small>{item.destination_masked}</small>
+                  <small className="method-security-copy">{statusCopy(item)}</small>
+                </div>
+                <i><Icon name="check" size={14} /></i>
+              </button>
+            );
+          })}
         </div>
       )}
 
       {step === 2 && (
         <div className="form-stack">
-          {isMercadoPago && (
-            <div className="selected-provider-banner">
-              <MercadoPagoLogo />
-              <div><strong>Retiro a Mercado Pago</strong><small>{method?.destination_masked} · {method?.holder_name || "Titular registrado"}</small></div>
-            </div>
-          )}
+          <div className="selected-provider-banner">
+            {isMercadoPago ? <MercadoPagoLogo /> : <CategoryIcon type="other-bank" size={40} />}
+            <div><strong>Retiro a {methodLabel(method)}</strong><small>{method?.destination_masked} · {method?.holder_name || "Titular registrado"}</small></div>
+          </div>
           <label>
             Monto a retirar
-            <div className="money-input"><span>$</span><input type="number" min={5000} max={available} step={100} value={amount} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setAmount(Number(event.target.value))}/></div>
+            <div className="money-input"><span>$</span><input type="number" min={5000} max={available} step={100} value={amount} onChange={(event: ChangeEvent<HTMLInputElement>) => setAmount(Number(event.target.value))} /></div>
             <small>Disponible: ${available.toLocaleString("es-AR")} · Mínimo: $5.000</small>
           </label>
           <div className="quick-amounts">
@@ -154,13 +163,13 @@ export function WithdrawalWizard({ available, methods, realMode }: { available: 
             <button type="button" onClick={() => setAmount(available)}>Todo</button>
           </div>
           {!valid && <p className="form-error">El monto debe estar entre $5.000 y tu saldo disponible.</p>}
-          <div className="withdraw-security-box"><span><Icon name="shield" size={19}/></span><p>El destino no puede editarse durante el retiro. Los cambios recientes activan una revisión de seguridad.</p></div>
+          <div className="withdraw-security-box"><span><Icon name="shield" size={19} /></span><p>El destino no puede editarse durante el retiro. Tus datos y ganancias están protegidos; validamos cada retiro antes de procesarlo.</p></div>
         </div>
       )}
 
       {step === 3 && (
         <div className="withdraw-review">
-          <div className="review-provider-row"><span>Método</span><strong>{isMercadoPago ? <><MercadoPagoLogo compact /> Mercado Pago</> : method?.label}</strong></div>
+          <div className="review-provider-row"><span>Método</span><strong>{isMercadoPago ? <><MercadoPagoLogo compact /> Mercado Pago</> : methodLabel(method)}</strong></div>
           <div><span>Destino</span><strong>{method?.destination_masked}</strong></div>
           <div><span>Titular</span><strong>{method?.holder_name || "Registrado"}</strong></div>
           <div><span>Importe</span><strong>${amount.toLocaleString("es-AR")}</strong></div>

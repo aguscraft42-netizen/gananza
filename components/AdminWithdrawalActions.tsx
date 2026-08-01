@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 
 export function AdminWithdrawalActions({
@@ -41,7 +41,7 @@ export function AdminWithdrawalActions({
         headers: { "content-type": "application/json" },
         body: JSON.stringify({
           action,
-          note: action === "paid" ? `Transferencia ${methodType === "mercado_pago" ? "a Mercado Pago" : "bancaria"} confirmada` : `Acción ${action} desde panel Gananza`,
+          note: action === "paid" ? `Transferencia ${methodType === "mercado_pago" ? "a Mercado Pago" : "a otro banco"} confirmada` : `Acción ${action} desde panel Gananza`,
           providerReference: action === "paid" ? reference.trim() : null,
           receiptName: action === "paid" ? receiptName.trim() || null : null,
         }),
@@ -72,12 +72,12 @@ export function AdminWithdrawalActions({
       {status === "approved" && showPaymentForm && (
         <div className="admin-payment-form">
           <label>
-            Referencia {methodType === "mercado_pago" ? "de Mercado Pago" : "bancaria"}
-            <input value={reference} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setReference(event.target.value)} placeholder="Ej. MP-987654321" />
+            Referencia {methodType === "mercado_pago" ? "de Mercado Pago" : "de transferencia a otro banco"}
+            <input value={reference} onChange={(event: ChangeEvent<HTMLInputElement>) => setReference(event.target.value)} placeholder="Ej. MP-987654321" />
           </label>
           <label>
             Nombre del comprobante
-            <input value={receiptName} onChange={(event: React.ChangeEvent<HTMLInputElement>) => setReceiptName(event.target.value)} placeholder="comprobante-987654.pdf" />
+            <input value={receiptName} onChange={(event: ChangeEvent<HTMLInputElement>) => setReceiptName(event.target.value)} placeholder="comprobante-987654.pdf" />
           </label>
           <div>
             <button disabled={busy || reference.trim().length < 4} onClick={() => act("paid")}>{busy ? "Guardando…" : "Marcar pagado"}</button>

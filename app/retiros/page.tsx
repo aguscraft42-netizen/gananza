@@ -19,7 +19,7 @@ export default async function WithdrawalsPage() {
           <div>
             <span className="eyebrow">BILLETERA</span>
             <h1>Saldo y retiros</h1>
-            <p>Solo el saldo confirmado queda disponible. Cada movimiento conserva su estado.</p>
+            <p>Solo el saldo confirmado queda disponible. Mercado Pago y transferencia a otro banco se muestran como destinos separados.</p>
           </div>
           <span className="demo-chip">{context.configured ? "LEDGER REAL · RLS" : "DEMO · SIN DINERO REAL"}</span>
         </div>
@@ -29,7 +29,7 @@ export default async function WithdrawalsPage() {
           <div>
             <span className="eyebrow">MÉTODO PRINCIPAL EN ARGENTINA</span>
             <h2>Retirá a tu cuenta de Mercado Pago.</h2>
-            <p>{mercadoPagoMethod ? `Destino guardado: ${mercadoPagoMethod.destination_masked}` : "Agregá un alias o CVU desde tu perfil. El primer retiro se revisa manualmente."}</p>
+            <p>{mercadoPagoMethod ? `Destino Mercado Pago guardado: ${mercadoPagoMethod.destination_masked}` : "Agregá un alias o CVU de Mercado Pago desde tu perfil. El primer retiro se revisa manualmente."}</p>
           </div>
           <span className="mp-feature-status">{mercadoPagoMethod ? "✓ CONFIGURADO" : "PENDIENTE"}</span>
         </section>

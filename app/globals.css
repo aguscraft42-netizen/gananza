@@ -1670,6 +1670,353 @@ body::before { opacity: .018; }
   --yellow: var(--brand-gold);
 }
 
+/* Onboarding and payout refinement */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.single-auth {
+  grid-template-columns: minmax(0, 860px);
+  align-items: center;
+}
+
+.auth-layout:has(.premium-onboarding) {
+  width: min(920px, 100%);
+  min-height: auto;
+  grid-template-columns: minmax(0, 1fr);
+  justify-content: center;
+}
+
+.auth-layout:has(.premium-onboarding) .auth-promise {
+  display: none;
+}
+
+.premium-onboarding {
+  width: min(100%, 860px);
+  max-width: 860px;
+  padding: clamp(22px, 4vw, 42px);
+  border: 1px solid rgba(57, 218, 160, .2);
+  border-radius: 24px;
+  background:
+    radial-gradient(circle at 12% 14%, rgba(22,199,132,.105), transparent 31%),
+    radial-gradient(circle at 92% 8%, rgba(45,212,191,.07), transparent 27%),
+    linear-gradient(155deg, rgba(14,27,41,.98), rgba(7,18,29,.98));
+  box-shadow: 0 34px 90px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.05);
+}
+
+.onboarding-topline {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 9px;
+  align-items: center;
+  margin-bottom: 22px;
+  color: var(--text);
+}
+
+.onboarding-brand-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--green), #2dd4bf);
+  box-shadow: 0 8px 22px rgba(22,199,132,.22);
+}
+
+.onboarding-topline strong { font-size: 17px; letter-spacing: -.2px; }
+.onboarding-topline span {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+  color: var(--text-soft);
+  background: rgba(255,255,255,.035);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.premium-onboarding .onboarding-progress { margin-bottom: 24px; }
+.premium-onboarding .onboarding-head { margin-bottom: 22px; }
+.premium-onboarding .onboarding-head h1 {
+  max-width: 620px;
+  margin: 0 0 10px;
+  font-size: clamp(31px, 4.8vw, 48px);
+  line-height: 1.05;
+  letter-spacing: -1.4px;
+}
+.premium-onboarding .onboarding-head p {
+  max-width: 620px;
+  color: #a5b4c2;
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.onboarding-step-meta {
+  margin: 0 0 14px;
+  color: var(--green-2);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .2px;
+  text-transform: none;
+}
+
+.premium-choice-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin: 22px 0 0;
+}
+
+.premium-choice-grid button,
+.premium-method-choice button {
+  min-height: 112px;
+  padding: 18px;
+  border-radius: 18px;
+  border-color: rgba(184,205,226,.13);
+  background: linear-gradient(145deg, rgba(255,255,255,.04), rgba(255,255,255,.018));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.premium-choice-grid button:hover,
+.premium-method-choice button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(57,218,160,.35);
+  background: rgba(22,199,132,.055);
+}
+
+.premium-choice-grid button:focus-visible,
+.premium-method-choice button:focus-visible,
+.primary-button:focus-visible,
+.secondary-button:focus-visible,
+.payout-choice-tabs > button:focus-visible,
+.method-card:focus-visible {
+  outline: 3px solid rgba(57,218,160,.38);
+  outline-offset: 3px;
+}
+
+.premium-choice-grid button:active,
+.premium-method-choice button:active,
+.method-card:active {
+  transform: translateY(1px) scale(.99);
+}
+
+.premium-choice-grid button.selected,
+.premium-method-choice button.selected {
+  border-color: rgba(57,218,160,.75);
+  background: linear-gradient(145deg, rgba(22,199,132,.13), rgba(45,212,191,.055));
+  box-shadow: 0 0 0 4px rgba(22,199,132,.055), inset 0 1px 0 rgba(255,255,255,.055);
+}
+
+.category-icon {
+  --icon-size: 40px;
+  width: calc(var(--icon-size) + 16px);
+  height: calc(var(--icon-size) + 16px);
+  display: grid;
+  place-items: center;
+  border-radius: 16px;
+  background: rgba(22,199,132,.065);
+  border: 1px solid rgba(45,212,191,.12);
+}
+
+.category-icon img {
+  width: var(--icon-size);
+  height: var(--icon-size);
+  display: block;
+}
+
+.category-icon.selected {
+  background: rgba(22,199,132,.12);
+  border-color: rgba(57,218,160,.28);
+}
+
+.choice-copy { min-width: 0; }
+.premium-choice-grid button > .choice-copy,
+.premium-method-choice button > .choice-copy {
+  width: auto;
+  height: auto;
+  display: grid;
+  place-items: initial;
+  gap: 5px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  font-size: inherit;
+}
+.choice-copy strong {
+  color: var(--text);
+  font-size: 16px;
+  line-height: 1.2;
+}
+.choice-copy small,
+.choice-copy > span:not(.choice-title-row) {
+  color: #9fb0bf;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.choice-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.choice-title-row em {
+  padding: 4px 8px;
+  border-radius: 999px;
+  color: #0ce59b;
+  background: rgba(22,199,132,.11);
+  border: 1px solid rgba(22,199,132,.18);
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 900;
+}
+
+.premium-method-choice {
+  grid-template-columns: 1fr;
+}
+
+.payment-choice-card {
+  min-height: 132px !important;
+}
+
+.onboarding-security-note {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin: 2px 0 0;
+  padding: 13px 15px;
+  border: 1px solid rgba(22,199,132,.13);
+  border-radius: 14px;
+  color: #b8c7d5;
+  background: rgba(22,199,132,.045);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.onboarding-security-note svg { color: var(--green-2); flex: 0 0 auto; }
+.demo-start-button { margin-top: 18px; }
+
+.mercado-pago-logo img {
+  width: 118px;
+  height: auto;
+  display: block;
+}
+
+.mercado-pago-logo.compact img {
+  width: 78px;
+}
+
+.method-icon.branded .mercado-pago-logo,
+.method-icon.branded .mercado-pago-logo img {
+  transform: none;
+  width: 70px;
+  max-width: 100%;
+}
+
+.choice-icon.mp-choice {
+  width: 96px;
+  background: rgba(0,158,227,.075);
+  border-color: rgba(0,158,227,.15);
+}
+
+.method-icon.bank,
+.bank-mini-icon {
+  color: var(--green-2);
+  background: rgba(22,199,132,.075);
+  border-color: rgba(45,212,191,.16);
+}
+
+.method-card > div strong {
+  white-space: normal;
+}
+
+.method-card > div small {
+  white-space: normal;
+}
+
+@media (max-width: 900px) {
+  .single-auth {
+    display: block;
+  }
+
+  .premium-onboarding {
+    width: 100%;
+  }
+}
+
+@media (max-width: 620px) {
+  .auth-page {
+    padding-inline: 14px;
+  }
+
+  .premium-onboarding {
+    padding: 22px 18px;
+    border-radius: 20px;
+  }
+
+  .premium-onboarding .onboarding-head h1 {
+    font-size: 32px;
+    line-height: 1.08;
+  }
+
+  .premium-onboarding .onboarding-head p {
+    font-size: 14px;
+  }
+
+  .premium-choice-grid,
+  .premium-method-choice {
+    grid-template-columns: 1fr;
+  }
+
+  .premium-choice-grid button,
+  .premium-method-choice button {
+    min-height: 94px;
+    padding: 15px;
+    grid-template-columns: auto minmax(0,1fr) 24px;
+  }
+
+  .payment-choice-card {
+    min-height: 126px !important;
+  }
+
+  .choice-icon.mp-choice {
+    width: 84px;
+  }
+
+  .onboarding-actions {
+    margin-top: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button,
+  .primary-button,
+  .secondary-button,
+  .ghost-button,
+  .task-button,
+  .choice-grid button,
+  .method-card,
+  .onboarding-progress span {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  .button::after,
+  .primary-button::after,
+  .task-button::after {
+    display: none;
+  }
+}
+
 .gananza-brand {
   --brand-size: 42px;
   display: inline-flex;

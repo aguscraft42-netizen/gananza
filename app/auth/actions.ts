@@ -93,7 +93,8 @@ export async function signOutAction() {
 export async function saveOnboardingAction(formData: FormData) {
   if (!isSupabaseEnabled) redirect("/dashboard");
   const interests = formData.getAll("interests").filter((item): item is string => typeof item === "string");
-  const payoutPreference = field(formData, "payout_preference") || "mercado_pago";
+  const submittedPayoutPreference = field(formData, "payout_preference");
+  const payoutPreference = submittedPayoutPreference === "bank_transfer" ? "bank_transfer" : "mercado_pago";
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/acceso");

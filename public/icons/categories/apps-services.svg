@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="apps-title apps-desc">
+  <title id="apps-title">Apps y servicios</title>
+  <desc id="apps-desc">Telefono con grilla de aplicaciones para pruebas de servicios.</desc>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+    <rect width="23" height="34" x="12.5" y="7" stroke="#16c784" rx="6"/>
+    <path stroke="#8fd8d0" d="M21 36h6"/>
+    <path stroke="#2dd4bf" d="M18 16h4M26 16h4M18 24h4M26 24h4"/>
+    <path stroke="#16c784" d="M18 16v4M26 16v4M18 24v4M26 24v4"/>
+  </g>
+</svg>

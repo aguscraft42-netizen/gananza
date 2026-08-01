@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="quick-title quick-desc">
+  <title id="quick-title">Tareas rapidas</title>
+  <desc id="quick-desc">Rayo sobrio para acciones breves y tareas rapidas.</desc>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+    <path stroke="#16c784" d="M27.5 5.8 12.8 27.2h10.1l-2.4 15 14.7-21.4H25.1l2.4-15Z"/>
+    <path stroke="#8fd8d0" d="M8 18.2 4.8 16M40 32l3.2 2.2M10.2 35.4 6.8 38M37.8 12.6l3.4-2.6"/>
+    <path stroke="#2dd4bf" d="M7 27H3.5M44.5 21H41"/>
+  </g>
+</svg>

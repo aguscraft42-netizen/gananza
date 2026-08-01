@@ -29,7 +29,7 @@ export default async function ProfilePage() {
         <form action={signOutAction}><button className="text-button danger-text" type="submit">Cerrar sesión</button></form>
       </aside>
       <section className="profile-card">
-        <div className="section-head"><div><span className="eyebrow">MÉTODOS DE RETIRO</span><h2>Destinos protegidos</h2><p>Mercado Pago es el método recomendado. Los datos sensibles permanecen enmascarados.</p></div></div>
+        <div className="section-head"><div><span className="eyebrow">MÉTODOS DE RETIRO</span><h2>Destinos protegidos</h2><p>Mercado Pago es el método recomendado en Argentina. La transferencia a otro banco se mantiene como alternativa separada.</p></div></div>
         <PayoutMethodsManager initialMethods={methods as any[]} realMode={context.configured}/>
         <div className="security-banner"><span className="benefit-icon green"><Icon name="shield" size={20}/></span><div><strong>{context.configured ? "Privacidad por diseño" : "Listo para conectar"}</strong><small>{context.configured ? "Auth y RLS limitan cada consulta a tu propia cuenta." : "La demo no guarda información sensible."}</small></div></div>
         <div className="settings-list"><Link className="setting-row" href="/soporte"><span className="setting-icon"><Icon name="help"/></span><span className="setting-copy"><strong>Ayuda y soporte</strong><small>Preguntas frecuentes y seguimiento de tickets</small></span><Icon name="chevron" size={17}/></Link></div>

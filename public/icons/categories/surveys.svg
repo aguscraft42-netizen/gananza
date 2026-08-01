@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="surveys-title surveys-desc">
+  <title id="surveys-title">Encuestas</title>
+  <desc id="surveys-desc">Lista verificada para encuestas y opiniones.</desc>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+    <path stroke="#16c784" d="m9 15 3.4 3.4 6.1-7"/>
+    <path stroke="#2dd4bf" d="M23 16h16"/>
+    <path stroke="#16c784" d="m9 26 3.4 3.4 6.1-7"/>
+    <path stroke="#2dd4bf" d="M23 27h16"/>
+    <path stroke="#8fd8d0" d="m9 37 3.4 3.4 6.1-7"/>
+    <path stroke="#8fd8d0" d="M23 38h12"/>
+  </g>
+</svg>

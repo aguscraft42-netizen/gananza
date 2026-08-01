@@ -162,7 +162,7 @@ export async function getLedgerMovements() {
 export async function getPayoutMethods() {
   if (!isSupabaseEnabled) return [
     { id: "demo-mp", method_type: "mercado_pago", label: "Mercado Pago", destination_masked: "agu••••egh", holder_name: "Agustín Sayegh", is_default: true, is_verified: true, cooldown_until: null },
-    { id: "demo-bank", method_type: "bank_transfer", label: "Transferencia bancaria", destination_masked: "CBU •••• 0001", holder_name: "Agustín Sayegh", is_default: false, is_verified: false, cooldown_until: null },
+    { id: "demo-bank", method_type: "bank_transfer", label: "Transferencia a otro banco", destination_masked: "CBU •••• 0001", holder_name: "Agustín Sayegh", is_default: false, is_verified: false, cooldown_until: null },
   ];
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -182,7 +182,7 @@ export async function getAdminMetrics() {
 export async function getAdminQueue() {
   if (!isSupabaseEnabled) return [
     { id: "demo-1", user: "Lucía M.", amount: 7200, method: "Mercado Pago", methodType: "mercado_pago", destination: "luc••••mp", risk: 12, status: "requested", age: "2 h" },
-    { id: "demo-2", user: "Nicolás R.", amount: 5000, method: "Transferencia", methodType: "bank_transfer", destination: "•••• 4410", risk: 48, status: "reviewing", age: "5 h" },
+    { id: "demo-2", user: "Nicolás R.", amount: 5000, method: "Transferencia a otro banco", methodType: "bank_transfer", destination: "•••• 4410", risk: 48, status: "reviewing", age: "5 h" },
     { id: "demo-3", user: "Joel P.", amount: 8100, method: "Mercado Pago", methodType: "mercado_pago", destination: "joe••••ago", risk: 82, status: "approved", age: "1 día" },
   ];
   const supabase = await createClient();

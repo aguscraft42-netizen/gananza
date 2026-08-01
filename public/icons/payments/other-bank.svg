@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-labelledby="bank-title bank-desc">
+  <title id="bank-title">Transferencia a otro banco</title>
+  <desc id="bank-desc">Edificio bancario con tarjeta para transferencias a otra entidad.</desc>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+    <path stroke="#16c784" d="M7 18.5 24 8l17 10.5H7Z"/>
+    <path stroke="#8fd8d0" d="M10 39h28M12 34h14M13 21v13M21 21v13M29 21v6"/>
+    <rect width="15" height="10" x="28" y="28" stroke="#16c784" rx="2.5"/>
+    <path stroke="#2dd4bf" d="M31 36h5M6 29h7M6 29l3-3M6 29l3 3"/>
+  </g>
+</svg>
