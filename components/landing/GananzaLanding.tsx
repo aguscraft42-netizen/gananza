@@ -236,7 +236,7 @@ const LANDING_MARKUP = `
         <p>Una plataforma para descubrir tareas, seguir recompensas y retirar saldo disponible con información clara en cada etapa.</p>
       </div>
       <div class="footer-links"><strong>Producto</strong><a href="#beneficios">Beneficios</a><a href="#como-funciona">Cómo funciona</a><a href="#estados">Estados</a></div>
-      <div class="footer-links"><strong>Legal</strong><a href="#">Términos</a><a href="#">Privacidad</a><a href="/soporte">Soporte</a></div>
+      <div class="footer-links"><strong>Legal</strong><a href="/terminos">Términos</a><a href="/privacidad">Privacidad</a><a href="/soporte">Soporte</a></div>
     </div>
     <div class="footer-bottom"><span>© <span id="year"></span> Gananza</span><span>Argentina · Experiencia visual de integración</span></div>
   </div>
