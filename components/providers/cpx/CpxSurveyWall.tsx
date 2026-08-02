@@ -9,9 +9,21 @@ type CpxSurveyWallProps = {
   userId: string;
   email?: string;
   displayName?: string;
+  countryCode?: string;
+  birthDate?: string | null;
+  gender?: string | null;
+  zipCode?: string | null;
 };
 
-export function CpxSurveyWall({ userId, email, displayName }: CpxSurveyWallProps) {
+export function CpxSurveyWall({
+  userId,
+  email,
+  displayName,
+  countryCode,
+  birthDate,
+  gender,
+  zipCode,
+}: CpxSurveyWallProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const searchParams = useSearchParams();
@@ -19,7 +31,16 @@ export function CpxSurveyWall({ userId, email, displayName }: CpxSurveyWallProps
   const cpxMessageId = searchParams.get("cpx_message_id");
   const cpxStatus = searchParams.get("cpx_status") || searchParams.get("status");
 
-  const iframeUrl = cpxAdapter.getIframeUrl({ userId, email, displayName });
+  const iframeUrl = cpxAdapter.getIframeUrl({
+    userId,
+    email,
+    displayName,
+    countryCode,
+    birthDate,
+    gender,
+    zipCode,
+    orderBy: 3, // Priorizar ordenamiento por mayor Conversion Rate
+  });
 
   const getReturnNotice = () => {
     if (!cpxMessageId && !cpxStatus) return null;

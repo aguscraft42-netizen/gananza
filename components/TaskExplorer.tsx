@@ -12,7 +12,7 @@ type TaskExplorerProps = {
   initialTasks: Task[];
   realMode?: boolean;
   user?: { id: string; email: string } | null;
-  profile?: { displayName: string } | null;
+  profile?: { displayName: string; countryCode?: string; birthDate?: string | null } | null;
 };
 
 export function TaskExplorer({ initialTasks, realMode = false, user, profile }: TaskExplorerProps) {
@@ -90,7 +90,13 @@ export function TaskExplorer({ initialTasks, realMode = false, user, profile }: 
 
       {category === "Encuestas CPX" ? (
         <div style={{ marginTop: "16px" }}>
-          <CpxSurveyWall userId={user?.id || "demo-user"} email={user?.email} displayName={profile?.displayName} />
+          <CpxSurveyWall
+            userId={user?.id || "demo-user"}
+            email={user?.email}
+            displayName={profile?.displayName}
+            countryCode={profile?.countryCode}
+            birthDate={profile?.birthDate}
+          />
         </div>
       ) : visible.length ? (
         <div className="task-grid">

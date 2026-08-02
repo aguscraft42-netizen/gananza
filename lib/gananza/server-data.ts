@@ -15,7 +15,16 @@ export type WalletSnapshot = {
 export type AppContext = {
   configured: boolean;
   user: { id: string; email: string } | null;
-  profile: { displayName: string; level: number; experiencePoints: number; streakDays: number; hideBalance: boolean; onboardingCompleted: boolean };
+  profile: {
+    displayName: string;
+    level: number;
+    experiencePoints: number;
+    streakDays: number;
+    hideBalance: boolean;
+    onboardingCompleted: boolean;
+    countryCode?: string;
+    birthDate?: string | null;
+  };
   wallet: WalletSnapshot;
   roles: string[];
 };
@@ -23,7 +32,16 @@ export type AppContext = {
 const demoContext: AppContext = {
   configured: false,
   user: { id: "demo-user", email: "agustin.demo@gananza.app" },
-  profile: { displayName: "Agustín Sayegh", level: 3, experiencePoints: 3700, streakDays: 4, hideBalance: false, onboardingCompleted: true },
+  profile: {
+    displayName: "Agustín Sayegh",
+    level: 3,
+    experiencePoints: 3700,
+    streakDays: 4,
+    hideBalance: false,
+    onboardingCompleted: true,
+    countryCode: "AR",
+    birthDate: null,
+  },
   wallet: { available: 8650, pending: 620, held: 0, withdrawn: 20830, debt: 0, lifetime: 29480 },
   roles: ["user", "admin"],
 };
@@ -37,7 +55,7 @@ export async function getAppContext(options: { requireAuth?: boolean } = {}): Pr
     return { ...demoContext, configured: true, user: null, roles: [] };
   }
   const [{ data: profile }, { data: wallet }, { data: roleRows }] = await Promise.all([
-    supabase.from("profiles").select("display_name,level,experience_points,streak_days,hide_balance,onboarding_completed_at").eq("id", user.id).maybeSingle(),
+    supabase.from("profiles").select("display_name,level,experience_points,streak_days,hide_balance,onboarding_completed_at,country_code,birth_date").eq("id", user.id).maybeSingle(),
     supabase.from("wallets").select("available_balance,pending_balance,held_balance,withdrawn_balance,debt_balance,lifetime_earned").eq("user_id", user.id).maybeSingle(),
     supabase.from("user_roles").select("role").eq("user_id", user.id),
   ]);
@@ -51,6 +69,8 @@ export async function getAppContext(options: { requireAuth?: boolean } = {}): Pr
       streakDays: Number(profile?.streak_days || 0),
       hideBalance: Boolean(profile?.hide_balance),
       onboardingCompleted: Boolean(profile?.onboarding_completed_at),
+      countryCode: profile?.country_code || "AR",
+      birthDate: profile?.birth_date || null,
     },
     wallet: {
       available: Number(wallet?.available_balance || 0),
@@ -130,7 +150,6 @@ export async function getLedgerMovements() {
 
     let amount: number;
     if (entryType.startsWith("reward_")) {
-      // A reward can move between pending, available and debt in one atomic entry.
       amount = Math.abs(pending) || Math.abs(available) + Math.abs(debt);
       if (["reward_rejected", "reward_reversed"].includes(entryType)) amount *= -1;
     } else if (entryType.startsWith("withdrawal_")) {

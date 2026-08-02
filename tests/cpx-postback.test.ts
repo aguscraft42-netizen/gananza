@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { test } from "node:test";
-import { cpxAdapter } from "../lib/providers/cpx.ts";
+import { cleanPublicIp, cpxAdapter } from "../lib/providers/cpx.ts";
 
 const TEST_SECRET = "test_cpx_secret_key_123";
 const TEST_USER_ID = "00000000-0000-4000-8000-000000000001";
@@ -198,4 +198,58 @@ test("9. GET real con query parameters como los enviados por CPX en producción"
     assert.equal(result.payload.status, "confirmed");
     assert.equal(result.payload.rawPayload.description, "CPX Research · Bono por participación");
   }
+});
+
+test("10. main_info=true incluido ÚNICAMENTE con perfil demográfico válido", () => {
+  const urlConDemografia = new URL(
+    cpxAdapter.getIframeUrl({
+      userId: TEST_USER_ID,
+      birthDate: "1995-08-15",
+      gender: "m",
+      secret: TEST_SECRET,
+    })
+  );
+  assert.equal(urlConDemografia.searchParams.get("main_info"), "true");
+  assert.equal(urlConDemografia.searchParams.get("birthday_day"), "15");
+  assert.equal(urlConDemografia.searchParams.get("birthday_month"), "8");
+  assert.equal(urlConDemografia.searchParams.get("birthday_year"), "1995");
+  assert.equal(urlConDemografia.searchParams.get("gender"), "m");
+
+  const urlSinDemografia = new URL(
+    cpxAdapter.getIframeUrl({
+      userId: TEST_USER_ID,
+      secret: TEST_SECRET,
+    })
+  );
+  assert.equal(urlSinDemografia.searchParams.has("main_info"), false);
+  assert.equal(urlSinDemografia.searchParams.has("birthday_day"), false);
+  assert.equal(urlSinDemografia.searchParams.has("gender"), false);
+});
+
+test("11. Omisión de parámetros nulos/vacíos y codificación de email/username", () => {
+  const url = new URL(
+    cpxAdapter.getIframeUrl({
+      userId: TEST_USER_ID,
+      displayName: "Juan Pérez",
+      email: "juan.perez@domain.com",
+      gender: null,
+      zipCode: "",
+      secret: TEST_SECRET,
+    })
+  );
+
+  assert.equal(url.searchParams.get("username"), "Juan Pérez");
+  assert.equal(url.searchParams.get("email"), "juan.perez@domain.com");
+  assert.equal(url.searchParams.has("gender"), false);
+  assert.equal(url.searchParams.has("zip_code"), false);
+});
+
+test("12. Limpieza de IP pública IPv4 e IPv6 descartando puerto e IPs privadas", () => {
+  assert.equal(cleanPublicIp("190.191.192.193:8080"), "190.191.192.193");
+  assert.equal(cleanPublicIp("2001:db8::1"), "2001:db8::1");
+  assert.equal(cleanPublicIp("190.191.192.193, 10.0.0.1"), "190.191.192.193");
+  assert.equal(cleanPublicIp("127.0.0.1"), null);
+  assert.equal(cleanPublicIp("192.168.1.50"), null);
+  assert.equal(cleanPublicIp("10.0.0.12"), null);
+  assert.equal(cleanPublicIp("172.16.0.1"), null);
 });
