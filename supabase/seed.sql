@@ -2,13 +2,15 @@
 insert into public.providers (id, slug, name, website_url, is_active)
 values
   ('11111111-1111-4111-8111-111111111111', 'gananza-demo', 'Gananza Demo Network', 'https://gananza.local', true),
-  ('22222222-2222-4222-8222-222222222222', 'survey-demo', 'Survey Demo Network', 'https://gananza.local', true)
+  ('22222222-2222-4222-8222-222222222222', 'survey-demo', 'Survey Demo Network', 'https://gananza.local', true),
+  ('33333333-3333-4333-8333-333333333333', 'cpx-research', 'CPX Research', 'https://cpx-research.com', true)
 on conflict (id) do update set is_active = excluded.is_active;
 
 insert into private.provider_credentials (provider_id, callback_secret)
 values
   ('11111111-1111-4111-8111-111111111111', 'replace-this-local-secret'),
-  ('22222222-2222-4222-8222-222222222222', 'replace-this-local-survey-secret')
+  ('22222222-2222-4222-8222-222222222222', 'replace-this-local-survey-secret'),
+  ('33333333-3333-4333-8333-333333333333', 'replace-this-cpx-secret')
 on conflict (provider_id) do update set callback_secret = excluded.callback_secret;
 
 insert into public.offers (
