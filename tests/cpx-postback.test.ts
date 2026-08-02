@@ -1,0 +1,201 @@
+import assert from "node:assert/strict";
+import { createHash } from "node:crypto";
+import { test } from "node:test";
+import { cpxAdapter } from "../lib/providers/cpx.ts";
+
+const TEST_SECRET = "test_cpx_secret_key_123";
+const TEST_USER_ID = "00000000-0000-4000-8000-000000000001";
+
+function makeHash(transId: string, secret = TEST_SECRET): string {
+  return createHash("md5").update(`${transId}-${secret}`).digest("hex");
+}
+
+test("1. Bonus válido de $10 ARS por screenout", async () => {
+  const transId = "tx_bonus_1001";
+  const hash = makeHash(transId);
+  const searchParams = new URLSearchParams({
+    status: "1",
+    trans_id: transId,
+    user_id: TEST_USER_ID,
+    amount_local: "10",
+    amount_usd: "0.01",
+    type: "bonus",
+    hash: hash,
+  });
+
+  const req = new Request(`https://gananza-eta.vercel.app/api/webhooks/cpx-research?${searchParams.toString()}`);
+  const result = await cpxAdapter.parseAndValidatePostback(req, searchParams, {}, TEST_SECRET);
+
+  assert.equal(result.isValid, true);
+  if (result.isValid) {
+    assert.equal(result.payload.status, "confirmed");
+    assert.equal(result.payload.userReward, 10);
+    assert.equal(result.payload.rawPayload.description, "CPX Research · Bono por participación");
+    assert.equal(result.payload.rawPayload.amount_usd, 0.01);
+  }
+});
+
+test("2. Encuesta completada válida", async () => {
+  const transId = "tx_complete_2002";
+  const hash = makeHash(transId);
+  const searchParams = new URLSearchParams({
+    status: "1",
+    trans_id: transId,
+    user_id: TEST_USER_ID,
+    amount_local: "850",
+    amount_usd: "0.85",
+    type: "completed",
+    hash: hash,
+  });
+
+  const req = new Request(`https://gananza-eta.vercel.app/api/webhooks/cpx-research?${searchParams.toString()}`);
+  const result = await cpxAdapter.parseAndValidatePostback(req, searchParams, {}, TEST_SECRET);
+
+  assert.equal(result.isValid, true);
+  if (result.isValid) {
+    assert.equal(result.payload.status, "confirmed");
+    assert.equal(result.payload.userReward, 850);
+    assert.equal(result.payload.rawPayload.description, "CPX Research · Encuesta completada");
+  }
+});
+
+test("3. Transacción repetida / Parámetros válidos", async () => {
+  const transId = "tx_repeat_3003";
+  const hash = makeHash(transId);
+  const searchParams = new URLSearchParams({
+    status: "1",
+    trans_id: transId,
+    user_id: TEST_USER_ID,
+    amount_local: "500",
+    type: "complete",
+    hash: hash,
+  });
+
+  const req = new Request(`https://gananza-eta.vercel.app/api/webhooks/cpx-research?${searchParams.toString()}`);
+  const res1 = await cpxAdapter.parseAndValidatePostback(req, searchParams, {}, TEST_SECRET);
+  const res2 = await cpxAdapter.parseAndValidatePostback(req, searchParams, {}, TEST_SECRET);
+
+  assert.equal(res1.isValid, true);
+  assert.equal(res2.isValid, true);
+  if (res1.isValid && res2.isValid) {
+    assert.equal(res1.payload.externalTransactionId, res2.payload.externalTransactionId);
+  }
+});
+
+test("4. Hash incorrecto", async () => {
+  const searchParams = new URLSearchParams({
+    status: "1",
+    trans_id: "tx_invalid_hash",
+    user_id: TEST_USER_ID,
+    amount_local: "500",
+    hash: "bad_hash_value_xyz",
+  });
+
+  const req = new Request(`https://gananza-eta.vercel.app/api/webhooks/cpx-research?${searchParams.toString()}`);
+  const result = await cpxAdapter.parseAndValidatePostback(req, searchParams, {}, TEST_SECRET);
+
+  assert.equal(result.isValid, false);
+  if (!result.isValid) {
+    assert.equal(result.statusCode, 401);
+    assert.match(result.error, /signature|hash/i);
+  }
+});
+
+test("5. Usuario inexistente o parámetro de usuario faltante", async () => {
+  const searchParams = new URLSearchParams({
+    status: "1",
+    trans_id: "tx_nouser",
+    amount_local: "500",
+    hash: "some_hash",
+  });
+
+  const req = new Request(`https://gananza-eta.vercel.app/api/webhooks/cpx-research?${searchParams.toString()}`);
+  const result = await cpxAdapter.parseAndValidatePostback(req, searchParams, {}, TEST_SECRET);
+
+  assert.equal(result.isValid, false);
+  if (!result.isValid) {
+    assert.equal(result.statusCode, 400);
+  }
+});
+
+test("6. status=2 después de status=1 (reversión)", async () => {
+  const transId = "tx_reversal_6006";
+  const hash = makeHash(transId);
+  const searchParams = new URLSearchParams({
+    status: "2",
+    trans_id: transId,
+    user_id: TEST_USER_ID,
+    amount_local: "500",
+    type: "canceled",
+    hash: hash,
+  });
+
+  const req = new Request(`https://gananza-eta.vercel.app/api/webhooks/cpx-research?${searchParams.toString()}`);
+  const result = await cpxAdapter.parseAndValidatePostback(req, searchParams, {}, TEST_SECRET);
+
+  assert.equal(result.isValid, true);
+  if (result.isValid) {
+    assert.equal(result.payload.status, "reversed");
+    assert.equal(result.payload.rawPayload.description, "CPX Research · Reversión del proveedor");
+  }
+});
+
+test("7. Reverso repetido", async () => {
+  const transId = "tx_reversal_repeat_7007";
+  const hash = makeHash(transId);
+  const searchParams = new URLSearchParams({
+    status: "2",
+    trans_id: transId,
+    user_id: TEST_USER_ID,
+    amount_local: "500",
+    type: "reversed",
+    hash: hash,
+  });
+
+  const req = new Request(`https://gananza-eta.vercel.app/api/webhooks/cpx-research?${searchParams.toString()}`);
+  const res1 = await cpxAdapter.parseAndValidatePostback(req, searchParams, {}, TEST_SECRET);
+  const res2 = await cpxAdapter.parseAndValidatePostback(req, searchParams, {}, TEST_SECRET);
+
+  assert.equal(res1.isValid, true);
+  assert.equal(res2.isValid, true);
+  if (res1.isValid && res2.isValid) {
+    assert.equal(res1.payload.status, "reversed");
+    assert.equal(res2.payload.status, "reversed");
+  }
+});
+
+test("8. Parámetros faltantes (falta status)", async () => {
+  const searchParams = new URLSearchParams({
+    trans_id: "tx_missing_status",
+    user_id: TEST_USER_ID,
+    amount_local: "500",
+  });
+
+  const req = new Request(`https://gananza-eta.vercel.app/api/webhooks/cpx-research?${searchParams.toString()}`);
+  const result = await cpxAdapter.parseAndValidatePostback(req, searchParams, {}, TEST_SECRET);
+
+  assert.equal(result.isValid, false);
+  if (!result.isValid) {
+    assert.equal(result.statusCode, 400);
+    assert.match(result.error, /missing/i);
+  }
+});
+
+test("9. GET real con query parameters como los enviados por CPX en producción", async () => {
+  const transId = "real_cpx_trans_999";
+  const hash = makeHash(transId);
+  const rawUrl = `https://gananza-eta.vercel.app/api/webhooks/cpx-research?status=1&trans_id=${transId}&user_id=${TEST_USER_ID}&amount_local=10&amount_usd=0.01&type=screenout&hash=${hash}`;
+
+  const req = new Request(rawUrl, { method: "GET" });
+  const urlParams = new URL(rawUrl).searchParams;
+
+  const result = await cpxAdapter.parseAndValidatePostback(req, urlParams, {}, TEST_SECRET);
+
+  assert.equal(result.isValid, true);
+  if (result.isValid) {
+    assert.equal(result.payload.externalTransactionId, transId);
+    assert.equal(result.payload.userReward, 10);
+    assert.equal(result.payload.status, "confirmed");
+    assert.equal(result.payload.rawPayload.description, "CPX Research · Bono por participación");
+  }
+});
