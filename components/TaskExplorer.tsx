@@ -1,34 +1,78 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import type { Task, TaskStatus } from "@/lib/demo-data";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { Task, TaskCategory, TaskStatus } from "@/lib/demo-data";
 import { CpxSurveyWall } from "@/components/providers/cpx/CpxSurveyWall";
 import { Icon } from "./Icons";
 import { StatusPill } from "./StatusPill";
 
-const categories = ["Todas", "Encuestas CPX", "Juegos", "Encuestas", "Servicios", "Apps"] as const;
+export type CategoryFilter = "Todas" | TaskCategory;
+
+const categories: readonly CategoryFilter[] = [
+  "Todas",
+  "Juegos",
+  "Encuestas",
+  "Apps y servicios",
+  "Tareas rápidas",
+] as const;
 
 type TaskExplorerProps = {
   initialTasks: Task[];
   realMode?: boolean;
   user?: { id: string; email: string } | null;
   profile?: { displayName: string; countryCode?: string; birthDate?: string | null } | null;
+  cpxEnabled?: boolean;
 };
 
-export function TaskExplorer({ initialTasks, realMode = false, user, profile }: TaskExplorerProps) {
+export function TaskExplorer({
+  initialTasks,
+  realMode = false,
+  user,
+  profile,
+  cpxEnabled = true,
+}: TaskExplorerProps) {
   const [tasks, setTasks] = useState(initialTasks);
-  const [category, setCategory] = useState<(typeof categories)[number]>("Todas");
+  const [category, setCategory] = useState<CategoryFilter>("Todas");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState("recommended");
   const [selected, setSelected] = useState<Task | null>(null);
+  const [cpxWallOpen, setCpxWallOpen] = useState(false);
   const [toast, setToast] = useState("");
   const [busy, setBusy] = useState(false);
+
+  const triggerBtnRef = useRef<HTMLButtonElement | null>(null);
+  const backBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  // Bloqueo y restauración exacta del estilo de overflow previo
+  useEffect(() => {
+    if (cpxWallOpen) {
+      const previousOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      backBtnRef.current?.focus();
+
+      return () => {
+        document.body.style.overflow = previousOverflow;
+      };
+    }
+  }, [cpxWallOpen]);
+
+  // Cierre con tecla Escape para accesibilidad
+  useEffect(() => {
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape" && cpxWallOpen) {
+        setCpxWallOpen(false);
+        triggerBtnRef.current?.focus();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [cpxWallOpen]);
 
   const visible = useMemo(() => {
     let result = tasks.filter((task) => category === "Todas" || task.category === category);
     if (query.trim()) {
       const q = query.toLowerCase();
-      result = result.filter((task) => `${task.brand} ${task.title} ${task.description}`.toLowerCase().includes(q));
+      result = result.filter((task) => `${task.brand} ${task.title} ${task.description} ${task.provider}`.toLowerCase().includes(q));
     }
     if (sort === "reward") result = [...result].sort((a, b) => b.reward - a.reward);
     if (sort === "time") result = [...result].sort((a, b) => Number.parseInt(a.time) - Number.parseInt(b.time));
@@ -38,6 +82,9 @@ export function TaskExplorer({ initialTasks, realMode = false, user, profile }: 
     }
     return result;
   }, [tasks, category, query, sort]);
+
+  // El módulo CPX se muestra únicamente en "Todas" y "Encuestas" y si CPX está habilitado
+  const showCpxModule = cpxEnabled && (category === "Todas" || category === "Encuestas") && !query.trim();
 
   async function updateStatus(task: Task, status: TaskStatus) {
     setBusy(true);
@@ -64,6 +111,11 @@ export function TaskExplorer({ initialTasks, realMode = false, user, profile }: 
     }
   }
 
+  const handleCloseOverlay = () => {
+    setCpxWallOpen(false);
+    triggerBtnRef.current?.focus();
+  };
+
   return (
     <>
       <div className="task-search-row">
@@ -80,40 +132,66 @@ export function TaskExplorer({ initialTasks, realMode = false, user, profile }: 
       </div>
       <div className="toolbar">
         <div className="filter-row">
-          {categories.map((item) => (
-            <button key={item} className={`filter-chip ${category === item ? "active" : ""}`} onClick={() => setCategory(item)}>
-              {item} <b>{item === "Todas" ? tasks.length : item === "Encuestas CPX" ? "En vivo" : tasks.filter((task) => task.category === item).length}</b>
-            </button>
-          ))}
+          {categories.map((item) => {
+            const count = item === "Todas" ? tasks.length : tasks.filter((t) => t.category === item).length;
+            return (
+              <button key={item} className={`filter-chip ${category === item ? "active" : ""}`} onClick={() => setCategory(item)}>
+                {item} <b>{count}</b>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {category === "Encuestas CPX" ? (
-        <div style={{ marginTop: "16px" }}>
-          <CpxSurveyWall
-            userId={user?.id || "demo-user"}
-            email={user?.email}
-            displayName={profile?.displayName}
-            countryCode={profile?.countryCode}
-            birthDate={profile?.birthDate}
-          />
-        </div>
-      ) : visible.length ? (
+      {showCpxModule && (
+        <article className="cpx-feature-card" style={{ marginBottom: "24px", padding: "24px", borderRadius: "16px", background: "linear-gradient(135deg, rgba(124, 58, 237, 0.12) 0%, rgba(18, 20, 29, 0.8) 100%)", border: "1px solid rgba(124, 58, 237, 0.3)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "8px" }}>
+            <span className="eyebrow" style={{ color: "#a78bfa", fontWeight: 700, letterSpacing: "0.08em" }}>ENCUESTAS</span>
+            <span style={{ fontSize: "12px", padding: "4px 10px", borderRadius: "20px", background: "rgba(34, 197, 94, 0.15)", color: "#4ade80", border: "1px solid rgba(34, 197, 94, 0.3)", fontWeight: 600 }}>Proveedor habilitado</span>
+          </div>
+          <h3 style={{ fontSize: "20px", fontWeight: 700, color: "#f8fafc", marginBottom: "8px" }}>Encuestas para tu perfil</h3>
+          <p style={{ color: "#cbd5e1", fontSize: "14px", lineHeight: "1.5", maxWidth: "680px", marginBottom: "16px" }}>
+            Respondé encuestas y recibí una recompensa cuando completes el estudio o cuando el proveedor otorgue un bono por participación.
+          </p>
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+            <button
+              ref={triggerBtnRef}
+              type="button"
+              className="primary-button"
+              onClick={() => setCpxWallOpen(true)}
+              style={{ padding: "10px 22px", fontSize: "14px", fontWeight: 600 }}
+            >
+              Explorar encuestas
+            </button>
+            <span style={{ color: "#94a3b8", fontSize: "13px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+              <Icon name="shield" size={15} /> Por CPX Research
+            </span>
+          </div>
+          <small style={{ display: "block", color: "#64748b", fontSize: "12px", marginTop: "14px" }}>
+            La disponibilidad y la posibilidad de calificar dependen de tu perfil y de los requisitos de cada estudio.
+          </small>
+        </article>
+      )}
+
+      {visible.length ? (
         <div className="task-grid">
           {visible.map((task) => {
-            const kind = task.category === "Juegos" ? "game" : task.category === "Encuestas" ? "survey" : task.category === "Apps" ? "app" : "service";
+            const kind = task.category === "Juegos" ? "game" : task.category === "Encuestas" ? "survey" : "app";
             return (
               <article className={`task-card task-state-${task.status}`} key={task.id}>
                 <div className={`task-cover ${kind}`}>
                   <i className="cover-badge">{task.badge || "Oportunidad verificada"}</i>
-                  <span className="cover-logo"><Icon name={kind} size={28} strokeWidth={1.7} /></span>
+                  <span className="cover-logo"><Icon name={kind} size={26} strokeWidth={1.7} /></span>
                   <StatusPill status={task.status} />
                 </div>
                 <div className="task-card-body">
-                  <div className="task-meta"><span className={`task-type ${kind}`}>{task.category.toUpperCase()}</span><span>{task.brand} · {task.platform}</span></div>
+                  <div className="task-meta">
+                    <span className={`task-type ${kind}`}>{task.category.toUpperCase()}</span>
+                    <span>Por {task.provider}</span>
+                  </div>
                   <h3>{task.title}</h3>
                   <p>{task.description}</p>
-                  {typeof task.progress === "number" && (
+                  {task.status !== "available" && typeof task.progress === "number" && (
                     <>
                       <div className="progress-caption"><span>Progreso</span><b>{task.progress}%</b></div>
                       <div className="level-progress"><span style={{ width: `${task.progress}%` }} /></div>
@@ -122,7 +200,7 @@ export function TaskExplorer({ initialTasks, realMode = false, user, profile }: 
                   <div className="task-facts">
                     <div className="task-fact"><small>Tiempo</small><strong>{task.time}</strong></div>
                     <div className="task-fact"><small>Validación</small><strong>{task.validation}</strong></div>
-                    <div className="task-fact"><small>Vigencia</small><strong>{task.deadline}</strong></div>
+                    <div className="task-fact"><small>Plataforma</small><strong>{task.platform}</strong></div>
                   </div>
                   <footer className="task-card-footer">
                     <div className="reward-block"><small>RECOMPENSA</small><strong>${task.reward.toLocaleString("es-AR")}</strong></div>
@@ -135,12 +213,74 @@ export function TaskExplorer({ initialTasks, realMode = false, user, profile }: 
             );
           })}
         </div>
-      ) : (
-        <div className="empty-state">
-          <span><Icon name="search" size={22} /></span>
-          <h3>No encontramos tareas con esos filtros</h3>
-          <p>Probá otra categoría o limpiá la búsqueda.</p>
-          <button type="button" className="secondary-button" onClick={() => { setCategory("Todas"); setQuery(""); }}>Limpiar filtros</button>
+      ) : !showCpxModule ? (
+        <div className="empty-state" style={{ padding: "48px 24px", textAlign: "center", background: "rgba(18, 20, 29, 0.4)", borderRadius: "16px", border: "1px solid rgba(255, 255, 255, 0.06)" }}>
+          <span style={{ display: "inline-flex", padding: "16px", borderRadius: "50%", background: "rgba(124, 58, 237, 0.1)", color: "#a78bfa", marginBottom: "16px" }}>
+            <Icon name="search" size={28} />
+          </span>
+          <h3 style={{ fontSize: "18px", color: "#f8fafc", marginBottom: "8px" }}>Nuevas oportunidades próximamente</h3>
+          <p style={{ color: "#cbd5e1", fontSize: "14px", maxWidth: "460px", margin: "0 auto 20px auto" }}>
+            {cpxEnabled
+              ? "Mientras ampliamos el catálogo, podés explorar las encuestas disponibles para tu perfil."
+              : "Pronto habilitaremos nuevos proveedores y oportunidades en esta categoría."}
+          </p>
+          {cpxEnabled && (
+            <button
+              type="button"
+              className="secondary-button"
+              onClick={() => {
+                setCategory("Encuestas");
+                setQuery("");
+                setCpxWallOpen(true);
+              }}
+            >
+              Ver encuestas
+            </button>
+          )}
+        </div>
+      ) : null}
+
+      {/* Offerwall de CPX en Modal Overlay Full-Viewport con Safe Areas de iOS */}
+      {cpxWallOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="CPX Research Pared de Encuestas"
+          className="cpx-overlay-backdrop"
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 9999,
+            background: "#0c0e14",
+            overflowY: "auto",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100dvh",
+            paddingTop: "env(safe-area-inset-top, 0px)",
+            paddingBottom: "env(safe-area-inset-bottom, 0px)",
+          }}
+        >
+          <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", justifyContent: "space-between", background: "#12141d", position: "sticky", top: 0, zIndex: 100 }}>
+            <button
+              ref={backBtnRef}
+              type="button"
+              className="secondary-button"
+              onClick={handleCloseOverlay}
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", fontSize: "14px", fontWeight: 600 }}
+            >
+              ← Volver a Gananza
+            </button>
+            <span style={{ color: "#94a3b8", fontSize: "13px" }}>CPX Research · Pared de encuestas</span>
+          </div>
+          <div style={{ flex: 1, padding: "16px", maxWidth: "1200px", width: "100%", margin: "0 auto" }}>
+            <CpxSurveyWall
+              userId={user?.id || "demo-user"}
+              email={user?.email}
+              displayName={profile?.displayName}
+              countryCode={profile?.countryCode}
+              birthDate={profile?.birthDate}
+            />
+          </div>
         </div>
       )}
 

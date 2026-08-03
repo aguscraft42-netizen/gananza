@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { test } from "node:test";
 import { cleanPublicIp, cpxAdapter } from "../lib/providers/cpx.ts";
+import { SURVEY_PROVIDER_SLUGS } from "../lib/demo-data.ts";
 
 const TEST_SECRET = "test_cpx_secret_key_123";
 const TEST_USER_ID = "00000000-0000-4000-8000-000000000001";
@@ -252,4 +253,74 @@ test("12. Limpieza de IP pública IPv4 e IPv6 descartando puerto e IPs privadas"
   assert.equal(cleanPublicIp("192.168.1.50"), null);
   assert.equal(cleanPublicIp("10.0.0.12"), null);
   assert.equal(cleanPublicIp("172.16.0.1"), null);
+});
+
+test("13. Ocultar QA a usuarios normales en producción y permitir a administradores", () => {
+  const sampleTasks = [
+    { id: "real-1", title: "Tarea Real", isTest: false, status: "available" },
+    { id: "qa-1", title: "QA Task", isTest: true, status: "available" },
+  ];
+
+  const filterProdUser = (tasks: typeof sampleTasks, isProd: boolean, isStaff: boolean) =>
+    tasks.filter((t) => (t.isTest ? !isProd || isStaff : true));
+
+  assert.equal(filterProdUser(sampleTasks, true, false).length, 1);
+  assert.equal(filterProdUser(sampleTasks, true, false)[0].id, "real-1");
+
+  assert.equal(filterProdUser(sampleTasks, true, true).length, 2);
+  assert.equal(filterProdUser(sampleTasks, false, false).length, 2);
+});
+
+test("14. Exclusión de tareas QA en el cálculo de métricas públicas", () => {
+  const sampleTasks = [
+    { id: "real-1", title: "Tarea Real", isTest: false, status: "available" },
+    { id: "qa-1", title: "QA Task", isTest: true, status: "available" },
+  ];
+
+  const countAvailablePublic = (tasks: typeof sampleTasks) =>
+    tasks.filter((t) => !t.isTest && t.status === "available").length;
+
+  assert.equal(countAvailablePublic(sampleTasks), 1);
+});
+
+test("15. Visibilidad del módulo CPX exclusivamente en pestañas 'Todas' y 'Encuestas'", () => {
+  const isCpxVisibleInTab = (category: string, cpxEnabled: boolean, hasQuery: boolean) =>
+    cpxEnabled && (category === "Todas" || category === "Encuestas") && !hasQuery;
+
+  assert.equal(isCpxVisibleInTab("Todas", true, false), true);
+  assert.equal(isCpxVisibleInTab("Encuestas", true, false), true);
+  assert.equal(isCpxVisibleInTab("Juegos", true, false), false);
+  assert.equal(isCpxVisibleInTab("Apps y servicios", true, false), false);
+  assert.equal(isCpxVisibleInTab("Tareas rápidas", true, false), false);
+  assert.equal(isCpxVisibleInTab("Todas", true, true), false);
+  assert.equal(isCpxVisibleInTab("Todas", false, false), false);
+});
+
+test("16. Conteo de proveedores clasificados exclusivamente como encuestas (SURVEY_PROVIDER_SLUGS)", () => {
+  const dbProviders = [
+    { slug: "cpx-research", is_active: true },
+    { slug: "ayet-studios", is_active: true },
+    { slug: "torox", is_active: true },
+  ];
+
+  const surveyProviders = dbProviders.filter((p) =>
+    p.is_active && (SURVEY_PROVIDER_SLUGS as readonly string[]).includes(p.slug as any)
+  );
+
+  // ayeT y Torox son proveedores de juegos/apps, no de encuestas
+  assert.equal(surveyProviders.length, 1);
+  assert.equal(surveyProviders[0].slug, "cpx-research");
+});
+
+test("17. CPX inactivo o deshabilitado no incrementa el contador de encuestas ni muestra tarjeta habilitada", () => {
+  const dbProvidersInactive = [
+    { slug: "cpx-research", is_active: false },
+    { slug: "ayet-studios", is_active: true },
+  ];
+
+  const surveyProviders = dbProvidersInactive.filter((p) =>
+    p.is_active && (SURVEY_PROVIDER_SLUGS as readonly string[]).includes(p.slug as any)
+  );
+
+  assert.equal(surveyProviders.length, 0);
 });

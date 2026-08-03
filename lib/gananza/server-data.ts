@@ -85,7 +85,11 @@ export async function getAppContext(options: { requireAuth?: boolean } = {}): Pr
 }
 
 function categoryLabel(value: string): Task["category"] {
-  return value === "game" ? "Juegos" : value === "survey" ? "Encuestas" : value === "app" ? "Apps" : "Servicios";
+  const v = String(value || "").toLowerCase();
+  if (v === "game" || v === "games") return "Juegos";
+  if (v === "survey" || v === "surveys") return "Encuestas";
+  if (v === "quick_task" || v === "quick" || v === "registration") return "Tareas rápidas";
+  return "Apps y servicios";
 }
 
 function statusLabel(value?: string): TaskStatus {
@@ -97,13 +101,48 @@ function statusLabel(value?: string): TaskStatus {
   return "available";
 }
 
+// Lista explícita y documentada de slugs de proveedores cuyo catálogo es de encuestas
+export const SURVEY_PROVIDER_SLUGS = ["cpx-research"] as const;
+
+export async function getActiveSurveyProvidersCount(): Promise<{ count: number; cpxConfigured: boolean }> {
+  const cpxAppId = process.env.NEXT_PUBLIC_CPX_APP_ID || "35021";
+  const cpxConfigured = Boolean(cpxAppId);
+
+  if (!isSupabaseEnabled) {
+    return { count: cpxConfigured ? 1 : 0, cpxConfigured };
+  }
+
+  try {
+    const supabase = await createClient();
+    const { data: providers } = await supabase
+      .from("providers")
+      .select("slug, is_active")
+      .eq("is_active", true);
+
+    // Filtrar únicamente los proveedores activos cuya categoría sea de encuestas
+    const activeSurveyProviders = (providers || []).filter((p) =>
+      (SURVEY_PROVIDER_SLUGS as readonly string[]).includes(p.slug)
+    );
+
+    const isCpxActiveInDb = (providers || []).some((p) => p.slug === "cpx-research" && p.is_active);
+    const count = activeSurveyProviders.length > 0 ? activeSurveyProviders.length : (cpxConfigured && isCpxActiveInDb !== false ? 1 : 0);
+
+    return {
+      count,
+      cpxConfigured: cpxConfigured && isCpxActiveInDb !== false,
+    };
+  } catch {
+    return { count: cpxConfigured ? 1 : 0, cpxConfigured };
+  }
+}
+
 export async function getCatalogTasks(): Promise<Task[]> {
   if (!isSupabaseEnabled) return demoTasks;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/acceso");
   const [{ data: offers, error: offersError }, { data: sessions }] = await Promise.all([
-    supabase.from("offers").select("id,title,brand,description,category,platform,reward_amount,estimated_minutes,validation_label,difficulty_label,badge_label,requirements,ends_at,provider_id,providers(name)").eq("status", "active").order("reward_amount", { ascending: false }),
+    supabase.from("offers").select("id,title,brand,description,category,platform,reward_amount,estimated_minutes,validation_label,difficulty_label,badge_label,requirements,ends_at,metadata,external_offer_id,provider_id,providers(name)").eq("status", "active").order("reward_amount", { ascending: false }),
     supabase.from("task_sessions").select("offer_id,status,progress,updated_at").eq("user_id", user.id),
   ]);
   if (offersError) return [];
@@ -111,6 +150,21 @@ export async function getCatalogTasks(): Promise<Task[]> {
   return (offers || []).map((offer: any): Task => {
     const session = sessionByOffer.get(offer.id) as any;
     const provider = Array.isArray(offer.providers) ? offer.providers[0]?.name : offer.providers?.name;
+    const meta = offer.metadata && typeof offer.metadata === "object" ? offer.metadata : {};
+
+    // 1. FUENTE PRINCIPAL: metadatos estructurados en offer.metadata (is_test o environment === "test")
+    const metaIsTest = Boolean(meta.is_test || meta.environment === "test");
+
+    // 2. FALLBACK SECUNDARIO: patrones de ID externo o título de desarrollo
+    const fallbackIsTest = Boolean(
+      offer.external_offer_id?.startsWith("qa_") ||
+      offer.external_offer_id?.startsWith("test_") ||
+      String(offer.title || "").toLowerCase().includes("qa task") ||
+      String(offer.title || "").toLowerCase().includes("tarea de prueba")
+    );
+
+    const isTest = metaIsTest || fallbackIsTest;
+
     return {
       id: offer.id,
       title: offer.title,
@@ -128,6 +182,7 @@ export async function getCatalogTasks(): Promise<Task[]> {
       deadline: offer.ends_at ? new Intl.DateTimeFormat("es-AR", { day: "2-digit", month: "short" }).format(new Date(offer.ends_at)) : "Cupos limitados",
       requirements: Array.isArray(offer.requirements) ? offer.requirements.map(String) : [],
       provider: provider || "Proveedor asociado",
+      isTest,
     };
   });
 }

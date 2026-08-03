@@ -1,10 +1,15 @@
 export type TaskStatus = "available" | "in_progress" | "pending" | "confirmed" | "rejected" | "expired";
 
+export type TaskCategory = "Juegos" | "Encuestas" | "Apps y servicios" | "Tareas rápidas";
+
+// Slugs de proveedores cuyo catálogo principal es de encuestas
+export const SURVEY_PROVIDER_SLUGS = ["cpx-research"] as const;
+
 export type Task = {
   id: string;
   title: string;
   brand: string;
-  category: "Juegos" | "Encuestas" | "Servicios" | "Apps";
+  category: TaskCategory;
   reward: number;
   time: string;
   difficulty: "Fácil" | "Media";
@@ -17,6 +22,7 @@ export type Task = {
   deadline: string;
   requirements: string[];
   provider: string;
+  isTest?: boolean;
 };
 
 export const tasks: Task[] = [
@@ -58,7 +64,7 @@ export const tasks: Task[] = [
     id: "aulapro",
     title: "Probá una cuenta gratuita",
     brand: "AulaPro",
-    category: "Servicios",
+    category: "Apps y servicios",
     reward: 1800,
     time: "10 min",
     difficulty: "Fácil",
@@ -111,7 +117,7 @@ export const tasks: Task[] = [
     id: "nubecasa",
     title: "Configurá tu espacio",
     brand: "NubeCasa",
-    category: "Servicios",
+    category: "Apps y servicios",
     reward: 2300,
     time: "15 min",
     difficulty: "Fácil",
@@ -129,7 +135,7 @@ export const tasks: Task[] = [
     id: "fit-week",
     title: "Completá el perfil inicial",
     brand: "FitWeek",
-    category: "Apps",
+    category: "Apps y servicios",
     reward: 1250,
     time: "12 min",
     difficulty: "Fácil",

@@ -1,11 +1,28 @@
 import { AppShell } from "@/components/AppShell";
 import { Icon } from "@/components/Icons";
 import { TaskExplorer } from "@/components/TaskExplorer";
-import { getAppContext, getCatalogTasks } from "@/lib/gananza/server-data";
+import { getActiveSurveyProvidersCount, getAppContext, getCatalogTasks } from "@/lib/gananza/server-data";
 
 export default async function TasksPage() {
-  const [context, tasks] = await Promise.all([getAppContext(), getCatalogTasks()]);
-  const count = (status: string) => tasks.filter((task) => task.status === status).length;
+  const [context, allTasks, activeProviders] = await Promise.all([
+    getAppContext(),
+    getCatalogTasks(),
+    getActiveSurveyProvidersCount(),
+  ]);
+
+  const isStaff = context.roles.some((role) => ["admin", "reviewer", "support"].includes(role));
+  const isProd = process.env.NODE_ENV === "production";
+
+  // Ocultar tareas de prueba (isTest) para usuarios normales en producción
+  const visibleTasks = allTasks.filter((task) => {
+    if (task.isTest) {
+      return !isProd || isStaff;
+    }
+    return true;
+  });
+
+  const count = (status: string) => visibleTasks.filter((task) => task.status === status).length;
+  const connectedCount = activeProviders.count;
 
   return (
     <AppShell active="/tareas">
@@ -25,12 +42,42 @@ export default async function TasksPage() {
           </div>
         </div>
         <div className="state-overview">
-          <article><span className="status-dot available" /><div><strong>{count("available")} disponibles</strong><small>Listas para iniciar</small></div></article>
-          <article><span className="status-dot progress" /><div><strong>{count("in_progress")} en progreso</strong><small>Podés continuar</small></div></article>
-          <article><span className="status-dot pending" /><div><strong>{count("pending")} pendientes</strong><small>Esperando validación</small></div></article>
-          <article><span className="status-dot done" /><div><strong>{count("confirmed")} confirmadas</strong><small>Ya acreditadas</small></div></article>
+          <article>
+            <span className="status-dot available" />
+            <div>
+              <strong>{connectedCount} {connectedCount === 1 ? "conectado" : "conectados"}</strong>
+              <small>{connectedCount === 1 ? "Proveedor de encuestas" : "Proveedores de encuestas"}</small>
+            </div>
+          </article>
+          <article>
+            <span className="status-dot progress" />
+            <div>
+              <strong>{count("in_progress")} en progreso</strong>
+              <small>Podés continuar</small>
+            </div>
+          </article>
+          <article>
+            <span className="status-dot pending" />
+            <div>
+              <strong>{count("pending")} pendientes</strong>
+              <small>Esperando validación</small>
+            </div>
+          </article>
+          <article>
+            <span className="status-dot done" />
+            <div>
+              <strong>{count("confirmed")} confirmadas</strong>
+              <small>Ya acreditadas</small>
+            </div>
+          </article>
         </div>
-        <TaskExplorer initialTasks={tasks} realMode={context.configured} user={context.user} profile={context.profile} />
+        <TaskExplorer
+          initialTasks={visibleTasks}
+          realMode={context.configured}
+          user={context.user}
+          profile={context.profile}
+          cpxEnabled={activeProviders.cpxConfigured}
+        />
       </section>
     </AppShell>
   );
