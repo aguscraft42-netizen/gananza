@@ -66,7 +66,14 @@ export default async function AdminPage() {
                     </span>
                     <span><i className={`risk ${riskClass}`}>{row.risk}</i></span>
                     <span>{row.age}</span>
-                    <AdminWithdrawalActions id={row.id} status={row.status} methodType={row.methodType} realMode={context.configured} canReview={!context.configured || canReviewWithdrawals} />
+                    <AdminWithdrawalActions
+                      id={row.id}
+                      status={row.status}
+                      methodType={row.methodType}
+                      realMode={context.configured}
+                      canReview={!context.configured || canReviewWithdrawals}
+                      item={row}
+                    />
                   </div>
                 );
               })}

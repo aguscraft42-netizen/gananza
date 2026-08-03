@@ -1,77 +1,129 @@
 import { redirect } from "next/navigation";
+import { movements as demoMovements, tasks as demoTasks, type Task, type TaskCategory, type TaskStatus } from "@/lib/demo-data";
 import { isSupabaseEnabled } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
-import { movements as demoMovements, tasks as demoTasks, type Task, type TaskStatus } from "@/lib/demo-data";
 
-export type WalletSnapshot = {
-  available: number;
-  pending: number;
-  held: number;
-  withdrawn: number;
-  debt: number;
-  lifetime: number;
-};
+export { SURVEY_PROVIDER_SLUGS } from "@/lib/demo-data";
 
 export type AppContext = {
   configured: boolean;
   user: { id: string; email: string } | null;
   profile: {
     displayName: string;
+    avatarUrl?: string | null;
+    birthDate?: string | null;
+    gender?: string | null;
+    zipCode?: string | null;
+    countryCode?: string;
     level: number;
     experiencePoints: number;
     streakDays: number;
-    hideBalance: boolean;
     onboardingCompleted: boolean;
-    countryCode?: string;
-    birthDate?: string | null;
+    hideBalance: boolean;
   };
-  wallet: WalletSnapshot;
   roles: string[];
+  wallet: {
+    available: number;
+    pending: number;
+    held: number;
+    withdrawn: number;
+    debt: number;
+    lifetime: number;
+  };
 };
 
-const demoContext: AppContext = {
-  configured: false,
-  user: { id: "demo-user", email: "agustin.demo@gananza.app" },
-  profile: {
-    displayName: "Agustín Sayegh",
-    level: 3,
-    experiencePoints: 3700,
-    streakDays: 4,
-    hideBalance: false,
-    onboardingCompleted: true,
-    countryCode: "AR",
-    birthDate: null,
-  },
-  wallet: { available: 8650, pending: 620, held: 0, withdrawn: 20830, debt: 0, lifetime: 29480 },
-  roles: ["user", "admin"],
-};
+function categoryLabel(raw?: string): TaskCategory {
+  if (raw === "games" || raw === "Juegos") return "Juegos";
+  if (raw === "surveys" || raw === "Encuestas") return "Encuestas";
+  if (raw === "apps" || raw === "Apps y servicios") return "Apps y servicios";
+  return "Tareas rápidas";
+}
 
-export async function getAppContext(options: { requireAuth?: boolean } = {}): Promise<AppContext> {
-  if (!isSupabaseEnabled) return demoContext;
+function statusLabel(raw?: string): TaskStatus {
+  if (raw === "in_progress") return "in_progress";
+  if (raw === "submitted" || raw === "pending") return "pending";
+  if (raw === "approved" || raw === "confirmed") return "confirmed";
+  if (raw === "rejected") return "rejected";
+  if (raw === "expired") return "expired";
+  return "available";
+}
+
+export async function getAppContext(options?: { requireAuth?: boolean }): Promise<AppContext> {
+  const requireAuth = options?.requireAuth ?? true;
+  if (!isSupabaseEnabled) {
+    return {
+      configured: false,
+      user: { id: "demo-user", email: "demo@gananza.app" },
+      profile: {
+        displayName: "Demo User",
+        avatarUrl: null,
+        countryCode: "AR",
+        level: 4,
+        experiencePoints: 3450,
+        streakDays: 5,
+        onboardingCompleted: true,
+        hideBalance: false,
+      },
+      roles: ["admin", "reviewer", "support"],
+      wallet: { available: 12500, pending: 2400, held: 5000, withdrawn: 18500, debt: 0, lifetime: 31000 },
+    };
+  }
+
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
+
   if (!user) {
-    if (options.requireAuth !== false) redirect("/acceso");
-    return { ...demoContext, configured: true, user: null, roles: [] };
+    if (requireAuth) redirect("/acceso");
+    return {
+      configured: true,
+      user: null,
+      profile: {
+        displayName: "Invitado",
+        avatarUrl: null,
+        countryCode: "AR",
+        level: 1,
+        experiencePoints: 0,
+        streakDays: 0,
+        onboardingCompleted: true,
+        hideBalance: false,
+      },
+      roles: [],
+      wallet: { available: 0, pending: 0, held: 0, withdrawn: 0, debt: 0, lifetime: 0 },
+    };
   }
+
   const [{ data: profile }, { data: wallet }, { data: roleRows }] = await Promise.all([
-    supabase.from("profiles").select("display_name,level,experience_points,streak_days,hide_balance,onboarding_completed_at,country_code,birth_date").eq("id", user.id).maybeSingle(),
-    supabase.from("wallets").select("available_balance,pending_balance,held_balance,withdrawn_balance,debt_balance,lifetime_earned").eq("user_id", user.id).maybeSingle(),
+    supabase.from("profiles").select("display_name, avatar_url, birth_date, gender, zip_code, country_code, level, experience_points, streak_days, onboarding_completed, hide_balance").eq("id", user.id).maybeSingle(),
+    supabase.from("wallets").select("available_balance, pending_balance, held_balance, withdrawn_balance, debt_balance, lifetime_earned").eq("user_id", user.id).maybeSingle(),
     supabase.from("user_roles").select("role").eq("user_id", user.id),
   ]);
+
   return {
     configured: true,
     user: { id: user.id, email: user.email || "" },
-    profile: {
-      displayName: profile?.display_name || user.user_metadata?.display_name || user.email?.split("@")[0] || "Usuario",
-      level: Number(profile?.level || 1),
-      experiencePoints: Number(profile?.experience_points || 0),
-      streakDays: Number(profile?.streak_days || 0),
-      hideBalance: Boolean(profile?.hide_balance),
-      onboardingCompleted: Boolean(profile?.onboarding_completed_at),
-      countryCode: profile?.country_code || "AR",
-      birthDate: profile?.birth_date || null,
+    profile: profile ? {
+      displayName: profile.display_name,
+      avatarUrl: profile.avatar_url,
+      birthDate: profile.birth_date,
+      gender: profile.gender,
+      zipCode: profile.zip_code,
+      countryCode: profile.country_code || "AR",
+      level: profile.level || 1,
+      experiencePoints: profile.experience_points || 0,
+      streakDays: profile.streak_days || 0,
+      onboardingCompleted: profile.onboarding_completed ?? true,
+      hideBalance: Boolean(profile.hide_balance),
+    } : {
+      displayName: user.email?.split("@")[0] || "Usuario",
+      avatarUrl: null,
+      countryCode: "AR",
+      level: 1,
+      experiencePoints: 0,
+      streakDays: 0,
+      onboardingCompleted: true,
+      hideBalance: false,
     },
+    roles: (roleRows || []).map((row: { role: string }) => row.role),
     wallet: {
       available: Number(wallet?.available_balance || 0),
       pending: Number(wallet?.pending_balance || 0),
@@ -80,52 +132,29 @@ export async function getAppContext(options: { requireAuth?: boolean } = {}): Pr
       debt: Number(wallet?.debt_balance || 0),
       lifetime: Number(wallet?.lifetime_earned || 0),
     },
-    roles: (roleRows || []).map((row: { role: string }) => row.role),
   };
 }
 
-function categoryLabel(value: string): Task["category"] {
-  const v = String(value || "").toLowerCase();
-  if (v === "game" || v === "games") return "Juegos";
-  if (v === "survey" || v === "surveys") return "Encuestas";
-  if (v === "quick_task" || v === "quick" || v === "registration") return "Tareas rápidas";
-  return "Apps y servicios";
-}
-
-function statusLabel(value?: string): TaskStatus {
-  if (value === "started" || value === "registered") return "in_progress";
-  if (value === "pending") return "pending";
-  if (value === "confirmed") return "confirmed";
-  if (value === "rejected" || value === "reversed") return "rejected";
-  if (value === "expired") return "expired";
-  return "available";
-}
-
-// Lista explícita y documentada de slugs de proveedores cuyo catálogo es de encuestas
-export const SURVEY_PROVIDER_SLUGS = ["cpx-research"] as const;
-
 export async function getActiveSurveyProvidersCount(): Promise<{ count: number; cpxConfigured: boolean }> {
-  const cpxAppId = process.env.NEXT_PUBLIC_CPX_APP_ID || "35021";
-  const cpxConfigured = Boolean(cpxAppId);
-
+  const cpxConfigured = Boolean(process.env.CPX_APP_ID && process.env.CPX_SECURE_HASH);
   if (!isSupabaseEnabled) {
     return { count: cpxConfigured ? 1 : 0, cpxConfigured };
   }
 
   try {
     const supabase = await createClient();
-    const { data: providers } = await supabase
+    const { data: activeProviders } = await supabase
       .from("providers")
       .select("slug, is_active")
       .eq("is_active", true);
 
-    // Filtrar únicamente los proveedores activos cuya categoría sea de encuestas
-    const activeSurveyProviders = (providers || []).filter((p) =>
-      (SURVEY_PROVIDER_SLUGS as readonly string[]).includes(p.slug)
+    const surveyProviderSlugs = ["cpx-research"];
+    const activeSurveyProviders = (activeProviders || []).filter((p: { slug: string; is_active: boolean }) =>
+      surveyProviderSlugs.includes(p.slug)
     );
 
-    const isCpxActiveInDb = (providers || []).some((p) => p.slug === "cpx-research" && p.is_active);
-    const count = activeSurveyProviders.length > 0 ? activeSurveyProviders.length : (cpxConfigured && isCpxActiveInDb !== false ? 1 : 0);
+    const isCpxActiveInDb = (activeProviders || []).some((p: { slug: string }) => p.slug === "cpx-research");
+    const count = activeSurveyProviders.length > 0 ? activeSurveyProviders.length : cpxConfigured && isCpxActiveInDb !== false ? 1 : 0;
 
     return {
       count,
@@ -152,10 +181,7 @@ export async function getCatalogTasks(): Promise<Task[]> {
     const provider = Array.isArray(offer.providers) ? offer.providers[0]?.name : offer.providers?.name;
     const meta = offer.metadata && typeof offer.metadata === "object" ? offer.metadata : {};
 
-    // 1. FUENTE PRINCIPAL: metadatos estructurados en offer.metadata (is_test o environment === "test")
     const metaIsTest = Boolean(meta.is_test || meta.environment === "test");
-
-    // 2. FALLBACK SECUNDARIO: patrones de ID externo o título de desarrollo
     const fallbackIsTest = Boolean(
       offer.external_offer_id?.startsWith("qa_") ||
       offer.external_offer_id?.startsWith("test_") ||
@@ -255,18 +281,115 @@ export async function getAdminMetrics() {
 
 export async function getAdminQueue() {
   if (!isSupabaseEnabled) return [
-    { id: "demo-1", user: "Lucía M.", amount: 7200, method: "Mercado Pago", methodType: "mercado_pago", destination: "luc••••mp", risk: 12, status: "requested", age: "2 h" },
-    { id: "demo-2", user: "Nicolás R.", amount: 5000, method: "Transferencia a otro banco", methodType: "bank_transfer", destination: "•••• 4410", risk: 48, status: "reviewing", age: "5 h" },
-    { id: "demo-3", user: "Joel P.", amount: 8100, method: "Mercado Pago", methodType: "mercado_pago", destination: "joe••••ago", risk: 82, status: "approved", age: "1 día" },
+    {
+      id: "demo-1",
+      userId: "00000000-0000-4000-8000-000000000001",
+      user: "Lucía M.",
+      userEmail: "lucia.m@demo.com",
+      amount: 7200,
+      method: "Mercado Pago",
+      methodType: "mercado_pago",
+      destination: "luc••••mp",
+      holderName: "Lucía Martínez",
+      holderDocument: "DNI •••• 8234",
+      createdAt: new Date(Date.now() - 7200000).toISOString(),
+      risk: 12,
+      status: "requested",
+      age: "2 h",
+      availableBalance: 12500,
+      heldBalance: 7200,
+      pastWithdrawalsCount: 3,
+      recentConversionsCount: 8,
+      notes: "Solicitud de prueba demo",
+    },
+    {
+      id: "demo-2",
+      userId: "00000000-0000-4000-8000-000000000002",
+      user: "Nicolás R.",
+      userEmail: "nicolas.r@demo.com",
+      amount: 5000,
+      method: "Transferencia a otro banco",
+      methodType: "bank_transfer",
+      destination: "CBU •••• 4410",
+      holderName: "Nicolás Rodríguez",
+      holderDocument: "DNI •••• 1298",
+      createdAt: new Date(Date.now() - 18000000).toISOString(),
+      risk: 48,
+      status: "reviewing",
+      age: "5 h",
+      availableBalance: 8200,
+      heldBalance: 5000,
+      pastWithdrawalsCount: 1,
+      recentConversionsCount: 4,
+      notes: "En revisión de seguridad",
+    },
+    {
+      id: "demo-3",
+      userId: "00000000-0000-4000-8000-000000000003",
+      user: "Joel P.",
+      userEmail: "joel.p@demo.com",
+      amount: 8100,
+      method: "Mercado Pago",
+      methodType: "mercado_pago",
+      destination: "joe••••ago",
+      holderName: "Joel Pérez",
+      holderDocument: "DNI •••• 4321",
+      createdAt: new Date(Date.now() - 86400000).toISOString(),
+      risk: 82,
+      status: "approved",
+      age: "1 día",
+      availableBalance: 14500,
+      heldBalance: 8100,
+      pastWithdrawalsCount: 5,
+      recentConversionsCount: 12,
+      notes: "Aprobado por administración",
+    },
   ];
+
   const supabase = await createClient();
-  const { data } = await supabase.from("withdrawals").select("id,user_id,amount,status,created_at,payout_snapshot,payout_methods(label,method_type,destination_masked),profiles(display_name,risk_score)").in("status", ["requested","reviewing","approved"]).order("created_at", { ascending: true }).limit(20);
+  const { data } = await supabase
+    .from("withdrawals")
+    .select(`
+      id,
+      user_id,
+      amount,
+      status,
+      created_at,
+      payout_snapshot,
+      payout_methods(label, method_type, destination_masked, holder_name, holder_document),
+      profiles(display_name, risk_score)
+    `)
+    .in("status", ["requested", "reviewing", "approved"])
+    .order("created_at", { ascending: true })
+    .limit(30);
+
   return (data || []).map((row: any) => {
     const profile = Array.isArray(row.profiles) ? row.profiles[0] : row.profiles;
     const method = Array.isArray(row.payout_methods) ? row.payout_methods[0] : row.payout_methods;
     const hours = Math.max(1, Math.round((Date.now() - new Date(row.created_at).getTime()) / 3600000));
     const snapshot = row.payout_snapshot && typeof row.payout_snapshot === "object" ? row.payout_snapshot : {};
-    return { id: row.id, user: profile?.display_name || row.user_id.slice(0, 8), amount: Number(row.amount), method: method?.label || snapshot.label || "Método", methodType: method?.method_type || snapshot.method_type || "bank_transfer", destination: method?.destination_masked || snapshot.destination_masked || "Destino protegido", risk: Number(profile?.risk_score || 0), status: row.status, age: hours < 24 ? `${hours} h` : `${Math.floor(hours/24)} día` };
+
+    return {
+      id: row.id,
+      userId: row.user_id,
+      user: profile?.display_name || row.user_id.slice(0, 8),
+      userEmail: `${row.user_id.slice(0, 8)}@usuario.gananza`,
+      amount: Number(row.amount),
+      method: method?.label || snapshot.label || "Método",
+      methodType: method?.method_type || snapshot.method_type || "bank_transfer",
+      destination: method?.destination_masked || snapshot.destination_masked || "Destino protegido",
+      holderName: method?.holder_name || snapshot.holder_name || "Titular registrado",
+      holderDocument: method?.holder_document ? `DNI/CUIL •••• ${String(method.holder_document).slice(-4)}` : "Documento registrado",
+      createdAt: row.created_at,
+      risk: Number(profile?.risk_score || 0),
+      status: row.status,
+      age: hours < 24 ? `${hours} h` : `${Math.floor(hours / 24)} día`,
+      availableBalance: 0,
+      heldBalance: Number(row.amount),
+      pastWithdrawalsCount: 0,
+      recentConversionsCount: 0,
+      notes: snapshot.note || "Solicitud registrada",
+    };
   });
 }
 
