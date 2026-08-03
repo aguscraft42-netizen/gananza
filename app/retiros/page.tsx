@@ -1,8 +1,10 @@
 import { AppShell } from "@/components/AppShell";
 import { Icon } from "@/components/Icons";
 import { MercadoPagoLogo } from "@/components/MercadoPagoLogo";
+import { WithdrawalRulesSummary } from "@/components/WithdrawalRulesSummary";
 import { WithdrawalWizard } from "@/components/WithdrawalWizard";
 import { getAppContext, getLedgerMovements, getPayoutMethods } from "@/lib/gananza/server-data";
+import { getWithdrawalEligibility } from "@/lib/gananza/withdrawal-rules";
 
 export default async function WithdrawalsPage() {
   const [context, movements, methods] = await Promise.all([
@@ -10,6 +12,12 @@ export default async function WithdrawalsPage() {
     getLedgerMovements(),
     getPayoutMethods(),
   ]);
+
+  const eligibility = await getWithdrawalEligibility(
+    context.user?.id,
+    context.wallet.available
+  );
+
   const mercadoPagoMethod = methods.find((method: any) => method.method_type === "mercado_pago");
 
   return (
@@ -38,7 +46,7 @@ export default async function WithdrawalsPage() {
           <article className="wallet-card main">
             <small>DISPONIBLE PARA RETIRAR</small>
             <strong>${context.wallet.available.toLocaleString("es-AR")}</strong>
-            <p>Retiro mínimo: $5.000</p>
+            <p>Mínimo Mercado Pago: ${eligibility.minMercadoPago.toLocaleString("es-AR")}</p>
           </article>
           <article className="wallet-card">
             <small>PENDIENTE</small>
@@ -51,6 +59,8 @@ export default async function WithdrawalsPage() {
             <p>{context.wallet.debt ? `Deuda por reversión: $${context.wallet.debt.toLocaleString("es-AR")}` : "Sin deuda activa"}</p>
           </article>
         </div>
+
+        <WithdrawalRulesSummary eligibility={eligibility} availableBalance={context.wallet.available} />
 
         <div className="wallet-layout">
           <section className="section-card">
@@ -86,7 +96,12 @@ export default async function WithdrawalsPage() {
             </div>
             <div className="wallet-explainer"><strong>¿Por qué una recompensa queda pendiente?</strong><p>El proveedor necesita confirmar las condiciones. Hasta entonces no puede retirarse.</p></div>
           </section>
-          <WithdrawalWizard available={context.wallet.available} methods={methods as any[]} realMode={context.configured}/>
+          <WithdrawalWizard
+            available={context.wallet.available}
+            methods={methods as any[]}
+            realMode={context.configured}
+            eligibility={eligibility}
+          />
         </div>
       </section>
     </AppShell>

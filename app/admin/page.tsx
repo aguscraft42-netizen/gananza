@@ -1,10 +1,12 @@
 import { redirect } from "next/navigation";
 import { AppShell } from "@/components/AppShell";
 import { AdminExchangeRateControl } from "@/components/AdminExchangeRateControl";
+import { AdminWithdrawalRulesControl } from "@/components/AdminWithdrawalRulesControl";
 import { AdminWithdrawalActions } from "@/components/AdminWithdrawalActions";
 import { MercadoPagoLogo } from "@/components/MercadoPagoLogo";
 import { CategoryIcon } from "@/components/ui/category-icon";
 import { getCurrentExchangeRate } from "@/lib/gananza/exchange-rate";
+import { getWithdrawalRules } from "@/lib/gananza/withdrawal-rules";
 import { getAdminMetrics, getAdminQueue, getAppContext, getFraudFlags } from "@/lib/gananza/server-data";
 
 function methodLabel(type: string, fallback: string) {
@@ -12,12 +14,13 @@ function methodLabel(type: string, fallback: string) {
 }
 
 export default async function AdminPage() {
-  const [context, metrics, queue, flags, fxRateConfig] = await Promise.all([
+  const [context, metrics, queue, flags, fxRateConfig, withdrawalRules] = await Promise.all([
     getAppContext(),
     getAdminMetrics(),
     getAdminQueue(),
     getFraudFlags(),
     getCurrentExchangeRate(),
+    getWithdrawalRules(),
   ]);
 
   const isStaff = context.roles.some((role) => ["support", "reviewer", "admin"].includes(role));
@@ -34,9 +37,10 @@ export default async function AdminPage() {
           <div><span className="eyebrow">OPERACIONES INTERNAS</span><h1>Panel administrativo</h1><p>Usuarios, conversiones, retiros, soporte y riesgo con permisos explícitos.</p></div>
           <span className="demo-chip">{context.configured ? "ROL: " + context.roles.join(" · ").toUpperCase() : "ADMIN DEMO"}</span>
         </div>
-        <div className="admin-notice"><span>!</span><p><strong>{context.configured ? "Auditoría activa." : "Entorno de demostración."}</strong> Las transiciones financieras y cambios de tipo de cambio se ejecutan mediante funciones SQL y quedan registradas.</p></div>
+        <div className="admin-notice"><span>!</span><p><strong>{context.configured ? "Auditoría activa." : "Entorno de demostración."}</strong> Las transiciones financieras, tipos de cambio y reglas de retiro se ejecutan mediante funciones SQL y quedan registradas.</p></div>
         
         <AdminExchangeRateControl initialConfig={fxRateConfig} realMode={context.configured} isAdmin={!context.configured || isAdmin} />
+        <AdminWithdrawalRulesControl initialRules={withdrawalRules} realMode={context.configured} isAdmin={!context.configured || isAdmin} />
 
         <div className="admin-metrics">
           <article className="admin-card"><small>USUARIOS</small><strong>{Number(metric.users || 0).toLocaleString("es-AR")}</strong><span>Cuentas no suspendidas</span></article>

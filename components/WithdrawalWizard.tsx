@@ -4,6 +4,7 @@ import { useMemo, useState, type ChangeEvent } from "react";
 import { MercadoPagoLogo } from "@/components/MercadoPagoLogo";
 import { Icon } from "@/components/Icons";
 import { CategoryIcon } from "@/components/ui/category-icon";
+import type { UserWithdrawalEligibility } from "@/lib/gananza/withdrawal-rules";
 
 type Method = {
   id: string;
@@ -28,20 +29,38 @@ function statusCopy(method?: Method) {
   return "El primer retiro se revisa manualmente";
 }
 
-export function WithdrawalWizard({ available, methods, realMode }: { available: number; methods: Method[]; realMode: boolean }) {
+export function WithdrawalWizard({
+  available,
+  methods,
+  realMode,
+  eligibility,
+}: {
+  available: number;
+  methods: Method[];
+  realMode: boolean;
+  eligibility?: UserWithdrawalEligibility;
+}) {
+  const minMp = eligibility?.minMercadoPago ?? 5000;
+  const minBank = eligibility?.minBankTransfer ?? 10000;
+
   const orderedMethods = useMemo(
     () => [...methods].sort((a, b) => Number(b.method_type === "mercado_pago") - Number(a.method_type === "mercado_pago") || Number(b.is_default) - Number(a.is_default)),
     [methods],
   );
   const [step, setStep] = useState(1);
   const [methodId, setMethodId] = useState(orderedMethods[0]?.id || "");
-  const [amount, setAmount] = useState(Math.min(5000, available));
+  
+  const method = useMemo(() => orderedMethods.find((item) => item.id === methodId), [orderedMethods, methodId]);
+  const isMercadoPago = method?.method_type === "mercado_pago";
+  const currentMin = isMercadoPago ? minMp : minBank;
+
+  const [amount, setAmount] = useState(Math.max(currentMin, Math.min(currentMin, available)));
   const [receiptId, setReceiptId] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const method = useMemo(() => orderedMethods.find((item) => item.id === methodId), [orderedMethods, methodId]);
-  const valid = amount >= 5000 && amount <= available && Boolean(methodId);
-  const isMercadoPago = method?.method_type === "mercado_pago";
+
+  const isBlocked = Boolean(eligibility?.hasActiveRequest || eligibility?.cooldownUntil);
+  const valid = amount >= currentMin && amount <= available && Boolean(methodId) && !isBlocked;
 
   async function submitWithdrawal() {
     setBusy(true);
@@ -123,20 +142,25 @@ export function WithdrawalWizard({ available, methods, realMode }: { available: 
         <div className="method-grid">
           {orderedMethods.map((item) => {
             const itemIsMercadoPago = item.method_type === "mercado_pago";
+            const itemMin = itemIsMercadoPago ? minMp : minBank;
             return (
               <button
                 key={item.id}
                 type="button"
                 className={`method-card ${itemIsMercadoPago ? "mercado-pago-card" : ""} ${methodId === item.id ? "selected" : ""}`}
                 aria-pressed={methodId === item.id}
-                onClick={() => setMethodId(item.id)}
+                onClick={() => {
+                  setMethodId(item.id);
+                  const nextMin = itemIsMercadoPago ? minMp : minBank;
+                  setAmount(Math.max(nextMin, Math.min(nextMin, available)));
+                }}
               >
                 <span className={`method-icon ${itemIsMercadoPago ? "mp branded" : "bank"}`}>
                   {itemIsMercadoPago ? <MercadoPagoLogo compact /> : <CategoryIcon type="other-bank" size={32} />}
                 </span>
                 <div>
                   <strong>{methodLabel(item)}{itemIsMercadoPago && <em className="recommended-tag">Recomendado</em>}</strong>
-                  <small>{item.destination_masked}</small>
+                  <small>{item.destination_masked} · Mínimo: ${itemMin.toLocaleString("es-AR")}</small>
                   <small className="method-security-copy">{statusCopy(item)}</small>
                 </div>
                 <i><Icon name="check" size={14} /></i>
@@ -154,15 +178,25 @@ export function WithdrawalWizard({ available, methods, realMode }: { available: 
           </div>
           <label>
             Monto a retirar
-            <div className="money-input"><span>$</span><input type="number" min={5000} max={available} step={100} value={amount} onChange={(event: ChangeEvent<HTMLInputElement>) => setAmount(Number(event.target.value))} /></div>
-            <small>Disponible: ${available.toLocaleString("es-AR")} · Mínimo: $5.000</small>
+            <div className="money-input"><span>$</span><input type="number" min={currentMin} max={available} step={100} value={amount} onChange={(event: ChangeEvent<HTMLInputElement>) => setAmount(Number(event.target.value))} /></div>
+            <small>Disponible: ${available.toLocaleString("es-AR")} · Mínimo {methodLabel(method)}: ${currentMin.toLocaleString("es-AR")}</small>
           </label>
           <div className="quick-amounts">
-            <button type="button" onClick={() => setAmount(Math.min(5000, available))}>$5.000</button>
-            <button type="button" onClick={() => setAmount(Math.min(7000, available))}>$7.000</button>
-            <button type="button" onClick={() => setAmount(available)}>Todo</button>
+            <button type="button" onClick={() => setAmount(Math.max(currentMin, Math.min(currentMin, available)))}>${currentMin.toLocaleString("es-AR")}</button>
+            <button type="button" onClick={() => setAmount(Math.max(currentMin, Math.min(currentMin + 2000, available)))}>${(currentMin + 2000).toLocaleString("es-AR")}</button>
+            <button type="button" onClick={() => setAmount(available)}>Todo (${available.toLocaleString("es-AR")})</button>
           </div>
-          {!valid && <p className="form-error">El monto debe estar entre $5.000 y tu saldo disponible.</p>}
+          {!valid && (
+            <p className="form-error">
+              {isBlocked
+                ? eligibility?.blockReason
+                : amount < currentMin
+                ? `El monto mínimo para retiros a ${methodLabel(method)} es de $${currentMin.toLocaleString("es-AR")}.`
+                : amount > available
+                ? "El monto supera tu saldo disponible confirmado."
+                : "Monto inválido."}
+            </p>
+          )}
           <div className="withdraw-security-box"><span><Icon name="shield" size={19} /></span><p>El destino no puede editarse durante el retiro. Tus datos y ganancias están protegidos; validamos cada retiro antes de procesarlo.</p></div>
         </div>
       )}
@@ -183,8 +217,8 @@ export function WithdrawalWizard({ available, methods, realMode }: { available: 
       <div className="withdraw-actions">
         {step > 1 && <button className="secondary-button" type="button" onClick={() => setStep(step - 1)}>Volver</button>}
         {step < 3
-          ? <button className="primary-button" type="button" disabled={step === 2 && !valid} onClick={() => setStep(step + 1)}>Continuar</button>
-          : <button className="primary-button" type="button" disabled={busy || !valid} onClick={submitWithdrawal}>{busy ? "Enviando…" : `Confirmar retiro${isMercadoPago ? " a Mercado Pago" : ""}`}</button>}
+          ? <button className="primary-button" type="button" disabled={(step === 2 && !valid) || isBlocked} onClick={() => setStep(step + 1)}>Continuar</button>
+          : <button className="primary-button" type="button" disabled={busy || !valid || isBlocked} onClick={submitWithdrawal}>{busy ? "Enviando…" : `Confirmar retiro${isMercadoPago ? " a Mercado Pago" : ""}`}</button>}
       </div>
       <p className="provider-disclaimer">Mercado Pago es un servicio externo. Gananza identifica el destino, pero no implica asociación comercial ni procesa el pago dentro de Mercado Pago.</p>
     </aside>
