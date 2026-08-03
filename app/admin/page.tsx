@@ -35,7 +35,7 @@ export default async function AdminPage() {
     <AppShell active="/admin">
       <section className="page-content">
         <div className="v3-page-heading">
-          <div><span className="eyebrow">OPERACIONES INTERNAS</span><h1>Panel administrativo</h1><p>Usuarios, conversiones, retiros, finanzas, soporte y riesgo con permisos explícitos.</p></div>
+          <div><span className="eyebrow">OPERACIONES INTERNAS</span><h1>Panel administrativo</h1><p>Usuarios, conversiones, retiros, finanzas, riesgo y soporte con permisos explícitos.</p></div>
           <span className="demo-chip">{context.configured ? "ROL: " + context.roles.join(" · ").toUpperCase() : "ADMIN DEMO"}</span>
         </div>
         <div className="admin-notice"><span>!</span><p><strong>{context.configured ? "Auditoría activa." : "Entorno de demostración."}</strong> Las transiciones financieras, tipos de cambio y reglas de retiro se ejecutan mediante funciones SQL y quedan registradas.</p></div>
@@ -48,8 +48,11 @@ export default async function AdminPage() {
           <Link href="/admin/conversiones" className="secondary-button" style={{ fontSize: "13px" }}>
             📊 Historial de Conversiones
           </Link>
-          <Link href="/admin/finanzas" className="primary-button" style={{ fontSize: "13px" }}>
-            💵 Balance Financiero y Obligaciones
+          <Link href="/admin/finanzas" className="secondary-button" style={{ fontSize: "13px" }}>
+            💵 Balance Financiero
+          </Link>
+          <Link href="/admin/riesgo" className="primary-button" style={{ fontSize: "13px" }}>
+            ⚠️ Monitoreo de Riesgo
           </Link>
         </div>
 
@@ -78,7 +81,13 @@ export default async function AdminPage() {
               <span>Ver balance y márgenes →</span>
             </article>
           </Link>
-          <article className="admin-card"><small>ALERTAS ABIERTAS</small><strong>{metric.open_fraud_flags || 0}</strong><span>{metric.open_tickets || 0} tickets de soporte</span></article>
+          <Link href="/admin/riesgo" style={{ textDecoration: "none", color: "inherit" }}>
+            <article className="admin-card" style={{ cursor: "pointer" }}>
+              <small>ALERTAS Y RIESGO</small>
+              <strong>{metric.open_fraud_flags || 0}</strong>
+              <span>Ver usuarios y señales →</span>
+            </article>
+          </Link>
         </div>
         <div className="admin-layout">
           <section className="section-card">
