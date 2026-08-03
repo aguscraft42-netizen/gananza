@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { AdminExchangeRateControl } from "@/components/AdminExchangeRateControl";
 import { AdminWithdrawalRulesControl } from "@/components/AdminWithdrawalRulesControl";
@@ -38,13 +39,35 @@ export default async function AdminPage() {
           <span className="demo-chip">{context.configured ? "ROL: " + context.roles.join(" · ").toUpperCase() : "ADMIN DEMO"}</span>
         </div>
         <div className="admin-notice"><span>!</span><p><strong>{context.configured ? "Auditoría activa." : "Entorno de demostración."}</strong> Las transiciones financieras, tipos de cambio y reglas de retiro se ejecutan mediante funciones SQL y quedan registradas.</p></div>
-        
+
+        {/* Accesos Rápidos a Módulos Administrativos */}
+        <div style={{ display: "flex", gap: "12px", marginBottom: "20px" }}>
+          <Link href="/admin/usuarios" className="secondary-button" style={{ fontSize: "13px" }}>
+            👤 Gestión de Usuarios
+          </Link>
+          <Link href="/admin/conversiones" className="primary-button" style={{ fontSize: "13px" }}>
+            📊 Historial de Conversiones
+          </Link>
+        </div>
+
         <AdminExchangeRateControl initialConfig={fxRateConfig} realMode={context.configured} isAdmin={!context.configured || isAdmin} />
         <AdminWithdrawalRulesControl initialRules={withdrawalRules} realMode={context.configured} isAdmin={!context.configured || isAdmin} />
 
         <div className="admin-metrics">
-          <article className="admin-card"><small>USUARIOS</small><strong>{Number(metric.users || 0).toLocaleString("es-AR")}</strong><span>Cuentas no suspendidas</span></article>
-          <article className="admin-card"><small>CONVERSIONES PENDIENTES</small><strong>{metric.pending_conversions || 0}</strong><span>Esperando proveedor</span></article>
+          <Link href="/admin/usuarios" style={{ textDecoration: "none", color: "inherit" }}>
+            <article className="admin-card" style={{ cursor: "pointer" }}>
+              <small>USUARIOS</small>
+              <strong>{Number(metric.users || 0).toLocaleString("es-AR")}</strong>
+              <span>Gestión y estado de cuentas →</span>
+            </article>
+          </Link>
+          <Link href="/admin/conversiones" style={{ textDecoration: "none", color: "inherit" }}>
+            <article className="admin-card" style={{ cursor: "pointer" }}>
+              <small>CONVERSIONES</small>
+              <strong>{metric.pending_conversions || 0}</strong>
+              <span>Ver registros e ingresos USD →</span>
+            </article>
+          </Link>
           <article className="admin-card"><small>RETIROS EN COLA</small><strong>{metric.pending_withdrawals || 0}</strong><span>Solicitados, revisando o aprobados</span></article>
           <article className="admin-card"><small>ALERTAS ABIERTAS</small><strong>{metric.open_fraud_flags || 0}</strong><span>{metric.open_tickets || 0} tickets de soporte</span></article>
         </div>
