@@ -1,13 +1,12 @@
 import { AppShell } from "@/components/AppShell";
 import { Icon } from "@/components/Icons";
 import { TaskExplorer } from "@/components/TaskExplorer";
-import { getActiveSurveyProvidersCount, getAppContext, getCatalogTasks } from "@/lib/gananza/server-data";
+import { getAppContext, getCatalogTasks } from "@/lib/gananza/server-data";
 
 export default async function TasksPage() {
-  const [context, allTasks, activeProviders] = await Promise.all([
+  const [context, allTasks] = await Promise.all([
     getAppContext(),
     getCatalogTasks(),
-    getActiveSurveyProvidersCount(),
   ]);
 
   const isStaff = context.roles.some((role) => ["admin", "reviewer", "support"].includes(role));
@@ -22,7 +21,6 @@ export default async function TasksPage() {
   });
 
   const count = (status: string) => visibleTasks.filter((task) => task.status === status).length;
-  const connectedCount = activeProviders.count;
 
   return (
     <AppShell active="/tareas">
@@ -45,8 +43,8 @@ export default async function TasksPage() {
           <article>
             <span className="status-dot available" />
             <div>
-              <strong>{connectedCount} {connectedCount === 1 ? "conectado" : "conectados"}</strong>
-              <small>{connectedCount === 1 ? "Proveedor de encuestas" : "Proveedores de encuestas"}</small>
+              <strong>1 activo</strong>
+              <small>Proveedor de encuestas</small>
             </div>
           </article>
           <article>
@@ -76,7 +74,6 @@ export default async function TasksPage() {
           realMode={context.configured}
           user={context.user}
           profile={context.profile}
-          cpxEnabled={activeProviders.cpxConfigured}
         />
       </section>
     </AppShell>

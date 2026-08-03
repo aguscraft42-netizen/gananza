@@ -21,7 +21,6 @@ type TaskExplorerProps = {
   realMode?: boolean;
   user?: { id: string; email: string } | null;
   profile?: { displayName: string; countryCode?: string; birthDate?: string | null } | null;
-  cpxEnabled?: boolean;
 };
 
 export function TaskExplorer({
@@ -29,7 +28,6 @@ export function TaskExplorer({
   realMode = false,
   user,
   profile,
-  cpxEnabled = true,
 }: TaskExplorerProps) {
   const [tasks, setTasks] = useState(initialTasks);
   const [category, setCategory] = useState<CategoryFilter>("Todas");
@@ -83,8 +81,8 @@ export function TaskExplorer({
     return result;
   }, [tasks, category, query, sort]);
 
-  // El módulo CPX se muestra únicamente en "Todas" y "Encuestas" y si CPX está habilitado
-  const showCpxModule = cpxEnabled && (category === "Todas" || category === "Encuestas") && !query.trim();
+  // El módulo CPX se muestra directamente en "Todas" y "Encuestas" cuando no hay búsqueda
+  const showCpxModule = (category === "Todas" || category === "Encuestas") && !query.trim();
 
   async function updateStatus(task: Task, status: TaskStatus) {
     setBusy(true);
@@ -147,7 +145,7 @@ export function TaskExplorer({
         <article className="cpx-feature-card" style={{ marginBottom: "24px", padding: "24px", borderRadius: "16px", background: "linear-gradient(135deg, rgba(124, 58, 237, 0.12) 0%, rgba(18, 20, 29, 0.8) 100%)", border: "1px solid rgba(124, 58, 237, 0.3)" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "8px" }}>
             <span className="eyebrow" style={{ color: "#a78bfa", fontWeight: 700, letterSpacing: "0.08em" }}>ENCUESTAS</span>
-            <span style={{ fontSize: "12px", padding: "4px 10px", borderRadius: "20px", background: "rgba(34, 197, 94, 0.15)", color: "#4ade80", border: "1px solid rgba(34, 197, 94, 0.3)", fontWeight: 600 }}>Proveedor habilitado</span>
+            <span style={{ fontSize: "12px", padding: "4px 10px", borderRadius: "20px", background: "rgba(34, 197, 94, 0.15)", color: "#4ade80", border: "1px solid rgba(34, 197, 94, 0.3)", fontWeight: 600 }}>Proveedor activo</span>
           </div>
           <h3 style={{ fontSize: "20px", fontWeight: 700, color: "#f8fafc", marginBottom: "8px" }}>Encuestas para tu perfil</h3>
           <p style={{ color: "#cbd5e1", fontSize: "14px", lineHeight: "1.5", maxWidth: "680px", marginBottom: "16px" }}>
@@ -220,23 +218,19 @@ export function TaskExplorer({
           </span>
           <h3 style={{ fontSize: "18px", color: "#f8fafc", marginBottom: "8px" }}>Nuevas oportunidades próximamente</h3>
           <p style={{ color: "#cbd5e1", fontSize: "14px", maxWidth: "460px", margin: "0 auto 20px auto" }}>
-            {cpxEnabled
-              ? "Mientras ampliamos el catálogo, podés explorar las encuestas disponibles para tu perfil."
-              : "Pronto habilitaremos nuevos proveedores y oportunidades en esta categoría."}
+            Mientras ampliamos el catálogo, podés explorar las encuestas disponibles para tu perfil.
           </p>
-          {cpxEnabled && (
-            <button
-              type="button"
-              className="secondary-button"
-              onClick={() => {
-                setCategory("Encuestas");
-                setQuery("");
-                setCpxWallOpen(true);
-              }}
-            >
-              Ver encuestas
-            </button>
-          )}
+          <button
+            type="button"
+            className="secondary-button"
+            onClick={() => {
+              setCategory("Encuestas");
+              setQuery("");
+              setCpxWallOpen(true);
+            }}
+          >
+            Ver encuestas
+          </button>
         </div>
       ) : null}
 
