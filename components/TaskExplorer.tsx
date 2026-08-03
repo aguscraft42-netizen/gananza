@@ -132,9 +132,15 @@ export function TaskExplorer({
         <div className="filter-row">
           {categories.map((item) => {
             const count = item === "Todas" ? tasks.length : tasks.filter((t) => t.category === item).length;
+            const isEncuestas = item === "Encuestas";
             return (
               <button key={item} className={`filter-chip ${category === item ? "active" : ""}`} onClick={() => setCategory(item)}>
-                {item} <b>{count}</b>
+                {item}
+                {isEncuestas ? (
+                  <b style={{ fontSize: "11px", textTransform: "none", letterSpacing: "normal" }}>Disponible</b>
+                ) : count > 0 ? (
+                  <b>{count}</b>
+                ) : null}
               </button>
             );
           })}
