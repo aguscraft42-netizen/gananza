@@ -1,7 +1,6 @@
 import { AppShell } from "@/components/AppShell";
 import { Icon } from "@/components/Icons";
 import { MercadoPagoLogo } from "@/components/MercadoPagoLogo";
-import { WithdrawalRulesSummary } from "@/components/WithdrawalRulesSummary";
 import { WithdrawalWizard } from "@/components/WithdrawalWizard";
 import { getAppContext, getLedgerMovements, getPayoutMethods } from "@/lib/gananza/server-data";
 import { getWithdrawalEligibility } from "@/lib/gananza/withdrawal-rules";
@@ -23,6 +22,7 @@ export default async function WithdrawalsPage() {
   return (
     <AppShell active="/retiros">
       <section className="page-content">
+        {/* 1. Encabezado y saldo disponible */}
         <div className="v3-page-heading">
           <div>
             <span className="eyebrow">BILLETERA</span>
@@ -46,7 +46,7 @@ export default async function WithdrawalsPage() {
           <article className="wallet-card main">
             <small>DISPONIBLE PARA RETIRAR</small>
             <strong>${context.wallet.available.toLocaleString("es-AR")}</strong>
-            <p>Mínimo Mercado Pago: ${eligibility.minMercadoPago.toLocaleString("es-AR")}</p>
+            <p>Saldo confirmado</p>
           </article>
           <article className="wallet-card">
             <small>PENDIENTE</small>
@@ -60,49 +60,50 @@ export default async function WithdrawalsPage() {
           </article>
         </div>
 
-        <WithdrawalRulesSummary eligibility={eligibility} availableBalance={context.wallet.available} />
-
-        <div className="wallet-layout">
-          <section className="section-card">
-            <div className="section-head">
-              <div>
-                <span className="eyebrow">ÚLTIMOS MOVIMIENTOS</span>
-                <h2>Historial verificable</h2>
-                <p>Ingresos, pendientes, retiros y reversiones.</p>
-              </div>
-            </div>
-            <div className="transaction-list">
-              {movements.map((item: any, index: number) => (
-                <div className="transaction" key={item.id}>
-                  <span
-                    className="transaction-icon"
-                    style={{
-                      color: ["#69f2b0", "#c4a7ff", "#91caff", "#ffda70", "#69f2b0"][index % 5],
-                      background: ["rgba(0,200,111,.12)", "rgba(123,75,232,.14)", "rgba(37,135,232,.14)", "rgba(244,182,31,.13)", "rgba(0,200,111,.12)"][index % 5],
-                    }}
-                  >
-                    <Icon name={item.amount < 0 ? "withdraw" : item.state.startsWith("Pend") ? "clock" : "verified"} size={17}/>
-                  </span>
-                  <div className="transaction-copy"><strong>{item.label}</strong><small>{item.date}</small></div>
-                  <div className="transaction-amount">
-                    <strong style={{ color: item.amount > 0 ? "var(--green-2)" : "inherit" }}>
-                      {item.amount > 0 ? "+" : "−"}${Math.abs(item.amount).toLocaleString("es-AR")}
-                    </strong>
-                    <small>{item.state}</small>
-                  </div>
-                </div>
-              ))}
-              {!movements.length && <div className="empty-state compact"><h3>Todavía no hay movimientos</h3><p>Cuando una tarea se valide aparecerá aquí.</p></div>}
-            </div>
-            <div className="wallet-explainer"><strong>¿Por qué una recompensa queda pendiente?</strong><p>El proveedor necesita confirmar las condiciones. Hasta entonces no puede retirarse.</p></div>
-          </section>
+        {/* 2. Opción/sección para solicitar un retiro (Antes de Últimos movimientos) */}
+        <section className="withdrawal-wizard-section" style={{ marginTop: "24px", marginBottom: "24px" }}>
           <WithdrawalWizard
             available={context.wallet.available}
             methods={methods as any[]}
             realMode={context.configured}
             eligibility={eligibility}
           />
-        </div>
+        </section>
+
+        {/* 3. Últimos movimientos */}
+        <section className="section-card">
+          <div className="section-head">
+            <div>
+              <span className="eyebrow">ÚLTIMOS MOVIMIENTOS</span>
+              <h2>Historial verificable</h2>
+              <p>Ingresos, pendientes, retiros y reversiones.</p>
+            </div>
+          </div>
+          <div className="transaction-list">
+            {movements.map((item: any, index: number) => (
+              <div className="transaction" key={item.id}>
+                <span
+                  className="transaction-icon"
+                  style={{
+                    color: ["#69f2b0", "#c4a7ff", "#91caff", "#ffda70", "#69f2b0"][index % 5],
+                    background: ["rgba(0,200,111,.12)", "rgba(123,75,232,.14)", "rgba(37,135,232,.14)", "rgba(244,182,31,.13)", "rgba(0,200,111,.12)"][index % 5],
+                  }}
+                >
+                  <Icon name={item.amount < 0 ? "withdraw" : item.state.startsWith("Pend") ? "clock" : "verified"} size={17}/>
+                </span>
+                <div className="transaction-copy"><strong>{item.label}</strong><small>{item.date}</small></div>
+                <div className="transaction-amount">
+                  <strong style={{ color: item.amount > 0 ? "var(--green-2)" : "inherit" }}>
+                    {item.amount > 0 ? "+" : "−"}${Math.abs(item.amount).toLocaleString("es-AR")}
+                  </strong>
+                  <small>{item.state}</small>
+                </div>
+              </div>
+            ))}
+            {!movements.length && <div className="empty-state compact"><h3>Todavía no hay movimientos</h3><p>Cuando una tarea se valide aparecerá aquí.</p></div>}
+          </div>
+          <div className="wallet-explainer"><strong>¿Por qué una recompensa queda pendiente?</strong><p>El proveedor necesita confirmar las condiciones. Hasta entonces no puede retirarse.</p></div>
+        </section>
       </section>
     </AppShell>
   );
